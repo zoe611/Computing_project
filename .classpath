@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="sulmansarwar-spinal-pubmed-097025e9d16c/src/main/java"/>
+	<classpathentry kind="src" path="sulmansarwar-spinal-pubmed-097025e9d16c/src/test/java"/>
+	<classpathentry kind="lib" path="dev/frontend/vue-front/node_modules/selenium-server/lib/runner/selenium-server-standalone-3.11.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="sulmansarwar-spinal-pubmed-097025e9d16c/target/classes"/>
+</classpath>

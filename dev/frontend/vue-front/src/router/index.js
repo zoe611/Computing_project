@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Home from '@/components/Home/Home'
 import Search from '@/components/Search/Search'
+import Profile from '@/components/Profile/Profile'
 
 Vue.use(Router)
 
