@@ -11,8 +11,8 @@ $sort = $_POST['sort'];
 
 
 $response = array(
-    'term' => 'mysql',
-    'author_search' => 'wang',
+    /*'term' => 'mysql',
+    'author_search' => 'wang',*/
     'result' => array (
         '1' => array (
             'title' => 'i`m title',

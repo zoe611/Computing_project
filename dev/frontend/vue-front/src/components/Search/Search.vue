@@ -1,15 +1,17 @@
 <template>
   <div class="home">
-    <h1>Spinal Cord Injury Search Hub</h1>
-      <h1>{{request.term}}</h1>
-    <form class="search" action="">
-      <input type="search" class = "ti" placeholder="Search author..." required ref="author_input">
-      <input type="search" class = "ti" placeholder="Search term..." required ref="term_input">
-      <button type="submit" v-on:click="search_func">
-        Search
-      </button>
-    </form>
-       <!--    filter by date modified -->
+    <div class="header">
+      <h1>Spinal Cord Injury Search Hub</h1>
+      <!--<h1>{{request.term}}</h1>-->
+      <form class="search" action="">
+        <input type="search" class = "ti" placeholder="Search author..." required ref="author_input">
+        <input type="search" class = "ti" placeholder="Search term..." required ref="term_input">
+        <button type="submit" v-on:click="search_func">
+          Search
+        </button>
+      </form>
+    </div>
+    <!--    filter by date modified -->
     <div class="j-inline-search-filter">
       <label for="last-modified">Last Published:</label>
         <button>Year 2018</button>
@@ -18,39 +20,13 @@
         <button>Before 2014</button>
     </div>
     <!--    result list -->
-      <div class = "list">
-        <article class="post">
-        <h2 id="result"><a href="#">Article title</a></h2>
-        <p id="author">author</p>
-        <time id="time" datetime="2012-01-01">01/01/2012</time>
-        <p id="abstract">Donec id elit non mi porta gravida at  </p>
-        <!--<a href="#" class="cta">Article link</a>-->
-        </article>
-        <article class="post">
-          <h2><a href="#">Article title</a></h2>
-          <time datetime="2012-01-01">01/01/2012</time>
-          <p>onsectetur adipiscing elit. Maecenas faucibus mollis interdum. </p>
-          <a href="#" class="cta">Article link</a>
-        </article>
-        <article class="post">
-          <h2><a href="#">Article title</a></h2>
-          <time datetime="2012-01-01">01/01/2012</time>
-          <p>onsectetur adipiscing elit. Maecenas faucibus mollis interdum. </p>
-          <!--<a href="#" class="cta">Article link</a>-->
-        </article>
-        <article class="post">
-          <h2><a href="#">Article title</a></h2>
-          <time datetime="2012-01-01">01/01/2012</time>
-          <p>onsectetur adipiscing elit. Maecenas faucibus mollis interdum. </p>
-          <a href="#" class="cta">Article link</a>
-        </article>
-        <article class="post">
-          <h2><a href="#">Article title</a></h2>
-          <time datetime="2012-01-01">01/01/2012</time>
-          <p>onsectetur adipiscing elit. Maecenas faucibus mollis interdum. </p>
-          <a href="#" class="cta">Article link</a>
-        </article>
+    <div class="articles">
+      <div class="article" v-for="(item, index) in result.result" :key="item.id">
+        <h2 class="title" @click="toggleTitleDetail(index)">{{item.title}}</h2>
+        <h3 class="author">{{item.author}}, %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% {{item.pdate}}</h3>
       </div>
+    </div>
+
   </div>
 </template>
 
@@ -68,8 +44,12 @@ export default {
         filter: '',
         sort: ''
       },
+      result: {},
       res: {}
     }
+  },
+  mounted: function () {
+    this.post_result()
   },
   methods: {
     search_func () {
@@ -80,9 +60,18 @@ export default {
       this.request.sort = 'dfsd'
       this.$http.post(this.api, this.request)
         .then((response) => {
-          this.set('res', response.data)
-          this.request.term = response.response.term
+          console.log(response.data.term)
         })
+    },
+    post_result () {
+      this.$http.post('http://localhost/test.php', {title: this.title, author: this.author, pdate: this.pdate},
+        {emulateJSON: true}).then(function (result) {
+        console.log(result.data)
+        this.result = result.data
+      })
+    },
+    toggleTitleDetail (index) {
+
     }
   }
 
@@ -113,7 +102,7 @@ export default {
     font-size: 15px;
     font-weight: bold;
     text-align: -webkit-left;
-    margin:0;
+    margin-top:0;
     font-color:red;
   }
   @keyframes background-move {
@@ -148,9 +137,10 @@ export default {
    margin: 0 0 15px;
  }*/
  .j-inline-search-filter {
+   height: 800px;
    width: 100px;
    display: inline-block;
-   margin: 70px 10px 100px 22px;
+   margin: 70px 55px 100px 22px;
    float:left;
    font-size: 0.9em;
    font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
@@ -228,12 +218,30 @@ export default {
   /*body {
     font: 12px Arial, sans-serif;
   }*/
-  .list{
-    width: 620px;
-    height: 400px;
-    margin: 0 px;
+  .articles{
+    width: 1500px;
+    height: auto;
+    margin-top: 64px;
+    margin-left:30px;
   }
-  article.post {
+  .title {
+    float: none;
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    text-align: -webkit-left;
+  }
+  .article{
+    margin-bottom: 15px;
+  }
+  .author {
+      font-size: 15px;
+      float: none;
+      margin: 0;
+      padding: 0;
+      text-align: -webkit-left;
+  }
+  /*article.post {
     border-bottom: 1px dotted rgba(180, 180,   180, 1);
     margin-top: 60px;
     margin-bottom: 20px;
@@ -254,5 +262,5 @@ export default {
     font-size: 11px;
     font-weight: bold;
   }
-  }
+  }*/
 </style>

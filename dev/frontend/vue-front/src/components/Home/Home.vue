@@ -229,7 +229,7 @@ export default {
     height: 60px;
     width: 300px;
     background: transparent;
-    font-size: 1.1em;
+    font-size: 1.5em;
     font-weight: bold;
     color:black;
     border: 1.3px solid #fff;
