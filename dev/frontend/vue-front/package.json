@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "vue": "^2.5.2",
+    "vue-paginate-al": "^1.0.18",
     "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1"
   },

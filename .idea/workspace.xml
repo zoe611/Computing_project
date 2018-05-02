@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2e5418fa-e5b3-417b-a361-2035a7ae8db2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/home.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/homebg.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/search.jpg" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/search.jpg" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/package-lock.json" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/package-lock.json" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/package.json" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/package.json" />
       <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,8 +28,8 @@
       <file leaf-file-name="Search.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1290">
-              <caret line="86" column="5" lean-forward="false" selection-start-line="86" selection-start-column="5" selection-end-line="86" selection-end-column="5" />
+            <state relative-caret-position="-111">
+              <caret line="18" column="71" lean-forward="true" selection-start-line="18" selection-start-column="71" selection-end-line="18" selection-end-column="71" />
               <folding />
             </state>
           </provider>
@@ -85,9 +82,9 @@
     <handled-path value="$PROJECT_DIR$/dev/frontend/vue-front/node_modules" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="325" />
-    <option name="y" value="70" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="198" />
+    <option name="y" value="23" />
     <option name="width" value="1280" />
     <option name="height" value="719" />
   </component>
@@ -253,15 +250,15 @@
       <workItem from="1525073250568" duration="6153000" />
       <workItem from="1525149670779" duration="13925000" />
       <workItem from="1525172818485" duration="278000" />
-      <workItem from="1525235628791" duration="70000" />
+      <workItem from="1525235628791" duration="1293000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="92169000" />
+    <option name="totallyTimeSpent" value="93392000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1280" height="719" extended-state="6" />
+    <frame x="198" y="23" width="1280" height="719" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20078126" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -660,8 +657,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1290">
-          <caret line="86" column="5" lean-forward="false" selection-start-line="86" selection-start-column="5" selection-end-line="86" selection-end-column="5" />
+        <state relative-caret-position="-111">
+          <caret line="18" column="71" lean-forward="true" selection-start-line="18" selection-start-column="71" selection-end-line="18" selection-end-column="71" />
           <folding />
         </state>
       </provider>

@@ -32,13 +32,19 @@
         <h3 class="author">{{item.author}}, %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% {{item.pdate}}</h3>
       </div>
     </div>
-
+    <div>
+      <vue-paginate-al :totalPage="20" @btnClick="search(i)"></vue-paginate-al>
+    </div>
   </div>
 </template>
 
 <script>
+import VuePaginateAl from 'vue-paginate-al'
 export default {
   name: 'Home',
+  components: {
+    VuePaginateAl
+  },
   data () {
     return {
       api: 'http://43.240.98.137/test2.php',
