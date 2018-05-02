@@ -198,7 +198,7 @@ export default {
     height: 40px;
     position:relative;
     margin: 1px auto;
-    margin-top: 120px; }
+    margin-top: 220px; }
 
   /*.search input {
     width: 340px;

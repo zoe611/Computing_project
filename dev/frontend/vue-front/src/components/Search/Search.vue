@@ -114,7 +114,7 @@ export default {
     border-radius: 0px 0px 70px 70px;
   }
   h1{
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: 900;
     text-align: center;
     margin: 0;
@@ -157,29 +157,25 @@ export default {
    margin: 0 0 15px;
  }*/
  .search_filter {
-   height: 350px;
+   height: 500px;
    width: 150px;
    margin: 60px 30px 200px 20px;
    padding:0;
  }
  .filters_time {
-   height: 150px;
+   height: 180px;
    width: 100px;
    display: inline-block;
    margin-top: 10px;
    float:left;
-   font-size: 0.9em;
-   font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
    font-weight: normal;
  }
  .filters_sort {
-   height: 150px;
+   height: 100px;
    width: 150px;
    display: inline-block;
    margin-top: 10px;
    float:left;
-   font-size: 0.9em;
-   font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
    font-weight: normal;
   }
 /* .filter {
@@ -197,9 +193,11 @@ export default {
     float: left;
     height: 10px;
     display: vertical-align;
-    margin-top: 10px;
+    margin-top: 6px;
     text-align: left;
     cursor:pointer;
+    font-size: 1.2em;
+    font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
   }
   .search  {
     width: 700px;

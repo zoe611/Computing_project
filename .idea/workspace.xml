@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2e5418fa-e5b3-417b-a361-2035a7ae8db2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/package-lock.json" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/package-lock.json" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/package.json" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/package.json" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" />
       <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +17,8 @@
       <file leaf-file-name="Home.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1035">
-              <caret line="69" column="5" lean-forward="false" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
+            <state relative-caret-position="3075">
+              <caret line="205" column="23" lean-forward="true" selection-start-line="205" selection-start-column="23" selection-end-line="205" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -28,8 +27,8 @@
       <file leaf-file-name="Search.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-111">
-              <caret line="18" column="71" lean-forward="true" selection-start-line="18" selection-start-column="71" selection-end-line="18" selection-end-column="71" />
+            <state relative-caret-position="703">
+              <caret line="113" column="37" lean-forward="true" selection-start-line="113" selection-start-column="37" selection-end-line="113" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -250,12 +249,12 @@
       <workItem from="1525073250568" duration="6153000" />
       <workItem from="1525149670779" duration="13925000" />
       <workItem from="1525172818485" duration="278000" />
-      <workItem from="1525235628791" duration="1293000" />
+      <workItem from="1525235628791" duration="1842000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="93392000" />
+    <option name="totallyTimeSpent" value="93941000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="198" y="23" width="1280" height="719" extended-state="0" />
@@ -639,14 +638,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1035">
-          <caret line="69" column="5" lean-forward="false" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/8e896d77c2ae1f6551ad97666ae92ead/Message/MessageTemp/dc86f7eae769db7417e5dbed7a7479cd/File/get_points.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
@@ -655,10 +646,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3075">
+          <caret line="205" column="23" lean-forward="true" selection-start-line="205" selection-start-column="23" selection-end-line="205" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-111">
-          <caret line="18" column="71" lean-forward="true" selection-start-line="18" selection-start-column="71" selection-end-line="18" selection-end-column="71" />
+        <state relative-caret-position="703">
+          <caret line="113" column="37" lean-forward="true" selection-start-line="113" selection-start-column="37" selection-end-line="113" selection-end-column="37" />
           <folding />
         </state>
       </provider>
