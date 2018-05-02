@@ -6,18 +6,24 @@
       <form class="search" action="">
         <input type="search" class = "ti" placeholder="Search author..." required ref="author_input">
         <input type="search" class = "ti" placeholder="Search term..." required ref="term_input">
-        <button type="submit" v-on:click="search_func">
+        <button type="submit" v-on:click="search_click()">
           Search
         </button>
       </form>
     </div>
     <!--    filter by date modified -->
-    <div class="j-inline-search-filter">
-      <label for="last-modified">Last Published:</label>
-        <button>Year 2018</button>
-        <button>Year 2017</button>
-        <button>Year 2014</button>
-        <button>Before 2014</button>
+    <div class = "search_filter">
+      <div class="filters_time">
+        <h3 class="filter" @click="search_filter('all')">Any time</h3>
+        <h3 class="filter" @click="search_filter(2018)">Since 2018</h3>
+        <h3 class="filter" @click="search_filter(2017)">Since 2017</h3>
+        <h3 class="filter" @click="search_filter(2014)">Since 2014</h3>
+        <h3 class="filter" @click="search_filter('before')">Before 2014</h3>
+      </div>
+      <div class="filters_sort">
+        <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
+        <h3 class="filter" @click="search_sort('time')">Sort by date</h3>
+      </div>
     </div>
     <!--    result list -->
     <div class="articles">
@@ -35,43 +41,49 @@ export default {
   name: 'Home',
   data () {
     return {
-      api: 'http://localhost/test.php',
+      api: 'http://43.240.98.137/test2.php',
       request: {
-        method: 'search',
+        method: '',
         term: '',
         author_search: '',
         page: '',
-        filter: '',
-        sort: ''
+        filter: 'all',
+        sort: 'relative'
       },
-      result: {},
-      res: {}
+      result: {}
     }
   },
   mounted: function () {
-    this.post_result()
+    this.search_recent()
   },
   methods: {
-    search_func () {
+    search (i) {
       this.request.author_search = this.$refs.author_input.value
       this.request.term = this.$refs.term_input.value
-      this.request.page = 'dfs'
-      this.request.filter = 'dfs'
-      this.request.sort = 'dfsd'
+      this.request.page = i
       this.$http.post(this.api, this.request)
         .then((response) => {
-          console.log(response.data.term)
+          console.log(response)
+          this.result = response.data
         })
     },
-    post_result () {
-      this.$http.post('http://localhost/test.php', {title: this.title, author: this.author, pdate: this.pdate},
-        {emulateJSON: true}).then(function (result) {
-        console.log(result.data)
-        this.result = result.data
-      })
+    search_click () {
+      this.request.filter = 'all'
+      this.request.sort = 'relative'
+      this.request.method = 'search'
+      this.search(0)
     },
-    toggleTitleDetail (index) {
-
+    search_recent () {
+      this.request.method = 'search_recent'
+      this.search(0)
+    },
+    search_filter (filter) {
+      this.request.filter = filter
+      this.search(0)
+    },
+    search_sort (sort) {
+      this.request.sort = sort
+      this.search(0)
     }
   }
 
@@ -86,6 +98,15 @@ export default {
     background-repeat: no-repeat;
     background-size: cover;
   }
+  .header {
+    margin-top:0;
+    width:100%;
+    height:180px;
+    background-image:url("../../assets/searchnew.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 0px 0px 70px 70px;
+  }
   h1{
     font-size: 2rem;
     font-weight: 900;
@@ -94,16 +115,9 @@ export default {
     text-transform: uppercase;
     padding: 0.5em;
     animation: background-move 10s infinite;
-    background: url("../../assets/h1.jpeg");
+    background: url("../../assets/images-8.jpeg");
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  h2{
-    font-size: 15px;
-    font-weight: bold;
-    text-align: -webkit-left;
-    margin-top:0;
-    font-color:red;
   }
   @keyframes background-move {
     0% {
@@ -136,33 +150,51 @@ export default {
 /*  .j-inline-search-filter {
    margin: 0 0 15px;
  }*/
- .j-inline-search-filter {
-   height: 800px;
+ .search_filter {
+   height: 350px;
+   width: 150px;
+   margin: 60px 30px 200px 20px;
+   padding:0;
+ }
+ .filters_time {
+   height: 150px;
    width: 100px;
    display: inline-block;
-   margin: 70px 55px 100px 22px;
+   margin-top: 10px;
    float:left;
    font-size: 0.9em;
    font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
-   font-weight: 900;
+   font-weight: normal;
  }
- .j-inline-search-filter label {
-   display: vertical-align;
- }
- .j-inline-search-filter button {
-   max-width: 100px;
+ .filters_sort {
+   height: 150px;
+   width: 150px;
+   display: inline-block;
+   margin-top: 10px;
+   float:left;
+   font-size: 0.9em;
+   font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
+   font-weight: normal;
+  }
+/* .filter {
+   width: 180px;
    float: left;
-   height: 20px;
+   height: 10px;
    display: vertical-align;
    margin: 3px 10px 10px 10px;
- }
-  .j-inline-search-filter button:hover {
-    background: lightgray;
-    color:#444;}
-  .j-inline-search-filter button:active {
-    box-shadow: 0px 0px 12px 0px gray;}
-
-  .j-inline-search-filter button:focus {outline: 0;}
+ }*/
+  .filter:hover {
+    background: transparent;
+    color:#890D0B;}
+  .filter {
+    width: 150px;
+    float: left;
+    height: 10px;
+    display: vertical-align;
+    margin-top: 10px;
+    text-align: left;
+    cursor:pointer;
+  }
   .search  {
     width: 700px;
     height: 40px;
@@ -176,17 +208,25 @@ export default {
     padding: 10px 10px;
     margin-left: 10px;
     float: right;
-    color: black;
+    color: rgb(240, 184, 192);
     font-weight: bold;
     font-size: 1.1em;
-/*    border: 0;
-    background: transparent;*/
-    border-radius: 3px 0 0 3px;
-    border: 1px solid #fff;
-    /*background: #444;*/
-    background: rgba(0,0,0,.2);
+    border-radius: 5px;
+    border: 2px solid #fff;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  ::placeholder {
+    color: #D0CED2;
+    opacity: 1; /* Firefox */
   }
 
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #D0CED2;
+  }
+
+  ::-ms-input-placeholder { /* Microsoft Edge */
+    color: #D0CED2;
+  }
   .search input:focus {
     outline: 0;
     background:transparent;}
@@ -199,13 +239,12 @@ export default {
     cursor: pointer;
     height: 41px;
     width: 150px;
-    /*color: #fff;*/
-    color: rebeccapurple;
+    color: #D0CED2;
     font-weight: bold;
     font-size: 1.1em;
-    background: rgba(0,0,0,.2);
-    border: 1px solid darkgrey;
-    border-radius: 0 3px 3px 0;}
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid rgb(249,249,249);
+    border-radius:5px;}
 
   .search button:hover {
     background: #fff;

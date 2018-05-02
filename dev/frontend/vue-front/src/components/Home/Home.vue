@@ -62,7 +62,7 @@ export default {
     margin-top:0;
     width:100%;
     height:800px;
-    background-image:url("../../assets/homebg.jpg");
+    background-image:url("../../assets/new.jpg");
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -74,7 +74,7 @@ export default {
     text-transform: uppercase;
     padding: 2em;
     animation: background-move 10s infinite;
-    background: url("../../assets/h1.jpeg");
+    background: url("../../assets/h1new.jpg");
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -198,7 +198,7 @@ export default {
     height: 40px;
     position:relative;
     margin: 1px auto;
-    margin-top: 0px; }
+    margin-top: 120px; }
 
   /*.search input {
     width: 340px;
@@ -231,8 +231,8 @@ export default {
     background: transparent;
     font-size: 1.5em;
     font-weight: bold;
-    color:black;
-    border: 1.3px solid #fff;
+    color:rgb(240,250,255);
+    border: 2.5px solid rgb(249,249,249);
     border-radius: 0 3px 3px 0;}
 
   .search button:hover {

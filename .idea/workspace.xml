@@ -3,10 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="2e5418fa-e5b3-417b-a361-2035a7ae8db2" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/.eslintrc.js" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/.eslintrc.js" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/home.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/homebg.jpg" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/search.jpg" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/assets/search.jpg" />
       <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" />
       <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" />
-      <change beforePath="$PROJECT_DIR$/dev/frontend/vue-front/test.php" afterPath="$PROJECT_DIR$/dev/frontend/vue-front/test.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,21 +18,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Home.vue" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Home.vue" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="228" column="17" lean-forward="false" selection-start-line="228" selection-start-column="17" selection-end-line="228" selection-end-column="17" />
+            <state relative-caret-position="1035">
+              <caret line="69" column="5" lean-forward="false" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Search.vue" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Search.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
+            <state relative-caret-position="1290">
+              <caret line="86" column="5" lean-forward="false" selection-start-line="86" selection-start-column="5" selection-end-line="86" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -40,18 +41,8 @@
       <file leaf-file-name="get_points.vue" pinned="false" current-in-tab="false">
         <entry file="file://$USER_HOME$/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/8e896d77c2ae1f6551ad97666ae92ead/Message/MessageTemp/dc86f7eae769db7417e5dbed7a7479cd/File/get_points.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="930">
-              <caret line="62" column="16" lean-forward="false" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="test.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/test.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1515">
-              <caret line="101" column="0" lean-forward="false" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
+            <state relative-caret-position="585">
+              <caret line="39" column="77" lean-forward="false" selection-start-line="39" selection-start-column="72" selection-end-line="39" selection-end-column="77" />
               <folding />
             </state>
           </provider>
@@ -63,6 +54,7 @@
     <findStrings>
       <find>task.custom_task</find>
       <find>search_func</find>
+      <find>click</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -77,8 +69,8 @@
         <option value="$PROJECT_DIR$/dev/frontend/vue-front/src/main.js" />
         <option value="$PROJECT_DIR$/dev/frontend/vue-front/src/App.vue" />
         <option value="$PROJECT_DIR$/dev/frontend/vue-front/test.php" />
-        <option value="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" />
         <option value="$PROJECT_DIR$/dev/frontend/vue-front/.eslintrc.js" />
+        <option value="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue" />
         <option value="$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue" />
       </list>
     </option>
@@ -93,9 +85,9 @@
     <handled-path value="$PROJECT_DIR$/dev/frontend/vue-front/node_modules" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
-  <component name="ProjectFrameBounds">
-    <option name="x" value="58" />
-    <option name="y" value="23" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="325" />
+    <option name="y" value="70" />
     <option name="width" value="1280" />
     <option name="height" value="719" />
   </component>
@@ -115,7 +107,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -200,6 +191,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -259,17 +251,20 @@
       <workItem from="1524788875492" duration="10601000" />
       <workItem from="1525062156165" duration="8048000" />
       <workItem from="1525073250568" duration="6153000" />
-      <workItem from="1525149670779" duration="293000" />
+      <workItem from="1525149670779" duration="13925000" />
+      <workItem from="1525172818485" duration="278000" />
+      <workItem from="1525235628791" duration="70000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="78189000" />
+    <option name="totallyTimeSpent" value="92169000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="58" y="23" width="1280" height="719" extended-state="0" />
+    <frame x="0" y="23" width="1280" height="719" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20078126" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20078126" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20341615" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -348,18 +343,11 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Profile/Profile.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3105">
@@ -554,27 +542,7 @@
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/images.jpg" />
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/h1image.jpeg" />
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/images.png" />
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/h1.jpeg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/h1image.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/home.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/font.jpeg" />
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/homebg.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/logo.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -649,14 +617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/8e896d77c2ae1f6551ad97666ae92ead/Message/MessageTemp/dc86f7eae769db7417e5dbed7a7479cd/File/get_points.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="930">
-          <caret line="62" column="16" lean-forward="false" selection-start-line="62" selection-start-column="16" selection-end-line="62" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/test.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1515">
@@ -665,18 +625,43 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="10" column="17" lean-forward="false" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
-        </state>
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/home.jpg" />
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/homebg.jpg" />
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/h1.jpeg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/search.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/assets/h1image.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Home/Home.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="228" column="17" lean-forward="false" selection-start-line="228" selection-start-column="17" selection-end-line="228" selection-end-column="17" />
+        <state relative-caret-position="1035">
+          <caret line="69" column="5" lean-forward="false" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/8e896d77c2ae1f6551ad97666ae92ead/Message/MessageTemp/dc86f7eae769db7417e5dbed7a7479cd/File/get_points.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="39" column="77" lean-forward="false" selection-start-line="39" selection-start-column="72" selection-end-line="39" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dev/frontend/vue-front/src/components/Search/Search.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1290">
+          <caret line="86" column="5" lean-forward="false" selection-start-line="86" selection-start-column="5" selection-end-line="86" selection-end-column="5" />
           <folding />
         </state>
       </provider>
