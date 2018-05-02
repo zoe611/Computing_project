@@ -13,14 +13,14 @@
     </div>
     <!--    filter by date modified -->
     <div class = "search_filter">
-      <div class="filters_time">
+      <div class="filters_time" v-if="show()">
         <h3 class="filter" @click="search_filter('all')">Any time</h3>
         <h3 class="filter" @click="search_filter(2018)">Since 2018</h3>
         <h3 class="filter" @click="search_filter(2017)">Since 2017</h3>
         <h3 class="filter" @click="search_filter(2014)">Since 2014</h3>
         <h3 class="filter" @click="search_filter('before')">Before 2014</h3>
       </div>
-      <div class="filters_sort">
+      <div class="filters_sort" v-if="show()">
         <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 class="filter" @click="search_sort('time')">Sort by date</h3>
       </div>
@@ -90,6 +90,13 @@ export default {
     search_sort (sort) {
       this.request.sort = sort
       this.search(0)
+    },
+    show () {
+      if (this.request.method === 'search_recent') {
+        return false
+      } else {
+        return true
+      }
     }
   }
 
