@@ -100,7 +100,6 @@ export default {
   .home {
     width:100%;
     height:800px;
-    /*background-image:url("../../assets/search.jpg");*/
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -121,7 +120,7 @@ export default {
     text-transform: uppercase;
     padding: 0.5em;
     animation: background-move 10s infinite;
-    background: url("../../assets/images-8.jpeg");
+    background: url("../../assets/images-13.jpeg");
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -153,9 +152,6 @@ export default {
     src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v7/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
   }
   /* css for filter*/
-/*  .j-inline-search-filter {
-   margin: 0 0 15px;
- }*/
  .search_filter {
    height: 500px;
    width: 150px;
@@ -178,16 +174,9 @@ export default {
    float:left;
    font-weight: normal;
   }
-/* .filter {
-   width: 180px;
-   float: left;
-   height: 10px;
-   display: vertical-align;
-   margin: 3px 10px 10px 10px;
- }*/
   .filter:hover {
     background: transparent;
-    color:#890D0B;}
+    color:#EE6352;}
   .filter {
     width: 150px;
     float: left;
@@ -212,9 +201,9 @@ export default {
     padding: 10px 10px;
     margin-left: 10px;
     float: right;
-    color: rgb(240, 184, 192);
-    font-weight: bold;
-    font-size: 1.1em;
+    color: #14C7FF;
+    font-weight: bolder;
+    font-size: 1.2em;
     border-radius: 5px;
     border: 2px solid #fff;
     background: rgba(0, 0, 0, 0.45);
@@ -243,7 +232,7 @@ export default {
     cursor: pointer;
     height: 41px;
     width: 150px;
-    color: #D0CED2;
+    color: #14C7FF;
     font-weight: bold;
     font-size: 1.1em;
     background: rgba(0, 0, 0, 0.45);
@@ -258,9 +247,6 @@ export default {
 
   .search button:focus {outline: 0;}
 
-  /*body {
-    font: 12px Arial, sans-serif;
-  }*/
   .articles{
     width: 1500px;
     height: auto;
@@ -284,26 +270,7 @@ export default {
       padding: 0;
       text-align: -webkit-left;
   }
-  /*article.post {
-    border-bottom: 1px dotted rgba(180, 180,   180, 1);
-    margin-top: 60px;
-    margin-bottom: 20px;
-    margin-left:180px;
-    padding: 10px 110px 10px 110px;
-    position: center;
-    text-align: -webkit-left;
-  &:last-of-type {
-     border-bottom: 0;
-     padding-bottom: 0;
-   }
-  &:after {
-   @extend .clear;
-   }
-
-  .list time {
-    display: block;
-    font-size: 11px;
-    font-weight: bold;
+  .vue-paginate-al{
+    customActiveBGColor: pink;
   }
-  }*/
 </style>
