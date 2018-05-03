@@ -18,7 +18,8 @@
     "vue": "^2.5.2",
     "vue-paginate-al": "^1.0.18",
     "vue-resource": "^1.5.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuejs-paginate": "^1.9.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

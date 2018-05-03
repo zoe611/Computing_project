@@ -2,7 +2,6 @@
   <div class="home">
     <div class="header">
       <h1>Spinal Cord Injury Search Hub</h1>
-      <!--<h1>{{request.term}}</h1>-->
       <form class="search" action="">
         <input type="search" class = "ti" placeholder="Search author..." required ref="author_input">
         <input type="search" class = "ti" placeholder="Search term..." required ref="term_input">
@@ -11,33 +10,42 @@
         </button>
       </form>
     </div>
-    <!--    filter by date modified -->
+    <!--    filter by date  and sort modified -->
     <div class = "search_filter">
       <div class="filters_time" v-if="show()">
         <h3 class="filter" @click="search_filter('all')">Any time</h3>
-        <h3 class="filter" @click="search_filter(2018)">Since 2018</h3>
-        <h3 class="filter" @click="search_filter(2017)">Since 2017</h3>
-        <h3 class="filter" @click="search_filter(2014)">Since 2014</h3>
-        <h3 class="filter" @click="search_filter('before')">Before 2014</h3>
+        <h3 class="filter" @click="search_filter('=2018')">Since 2018</h3>
+        <h3 class="filter" @click="search_filter('=2017')">Since 2017</h3>
+        <h3 class="filter" @click="search_filter('=2014')">Since 2014</h3>
+        <h3 class="filter" @click="search_filter('<2014')">Before 2014</h3>
       </div>
       <div class="filters_sort" v-if="show()">
         <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
-        <h3 class="filter" @click="search_sort('time')">Sort by date</h3>
+        <h3 class="filter" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
     </div>
     <!--    result list -->
     <div class="articles">
       <div class="article" v-for="(item, index) in result.result" :key="item.id">
-        <h2 class="title" @click="toggleTitleDetail(index)">{{item.title}}</h2>
-        <h3 class="author">{{item.author}}, %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% {{item.pdate}}</h3>
+        <h2 class="title" @click="goTo(index)">{{item.title}}</h2>
+        <h3 class="author">{{item.author}},{{item.pdate}}</h3>
       </div>
     </div>
     <div>
-      <vue-paginate-al :totalPage="20" @btnClick="search(i)"></vue-paginate-al>
+      <!--<paginate
+              :page-count="20"
+              :click-handler="search"
+              :prev-text="'Prev'"
+              :next-text="'Next'"
+              :container-class="'className'">
+      </paginate>-->
+      <vue-paginate-al :totalPage="5" @btnClick="search(i)"></vue-paginate-al>
     </div>
   </div>
+
 </template>
 
+<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 <script>
 import VuePaginateAl from 'vue-paginate-al'
 export default {
@@ -70,8 +78,15 @@ export default {
       this.$http.post(this.api, this.request)
         .then((response) => {
           console.log(response)
-          this.result = response.data
+          if (response.bodyText !== 'empty search') {
+            this.result = response.data
+          }
+          console.log(this.result.result)
         })
+    },
+    goTo (index) {
+      var id = this.result.result[index].id
+      window.open('https://www.ncbi.nlm.nih.gov/pubmed/' + id)
     },
     search_click () {
       this.request.filter = 'all'
@@ -99,7 +114,6 @@ export default {
       }
     }
   }
-
 }
 </script>
 
@@ -160,13 +174,13 @@ export default {
   }
   /* css for filter*/
  .search_filter {
-   height: 500px;
+   height: 260px;
    width: 150px;
    margin: 60px 30px 200px 20px;
    padding:0;
  }
  .filters_time {
-   height: 180px;
+   height: 100px;
    width: 100px;
    display: inline-block;
    margin-top: 10px;
@@ -255,29 +269,50 @@ export default {
   .search button:focus {outline: 0;}
 
   .articles{
-    width: 1500px;
+    width: 1200px;
     height: auto;
     margin-top: 64px;
     margin-left:30px;
   }
   .title {
     float: none;
+    width: 980px;
     font-size: 20px;
+    color: black;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
     margin: 0;
     padding: 0;
     text-align: -webkit-left;
+   /* overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;*/
+    cursor:pointer;
   }
+  .title:hover{
+    background: transparent;
+    text-decoration:underline;color: #0074D9;}
   .article{
+    width: 980px;
     margin-bottom: 15px;
   }
   .author {
       font-size: 15px;
+      color: black;
+      font-family: "Times New Roman", Times, serif;
       float: none;
       margin: 0;
       padding: 0;
       text-align: -webkit-left;
   }
-  .vue-paginate-al{
-    customActiveBGColor: pink;
+  .links line {
+    stroke: #999;
+    stroke-opacity: 0.6;
   }
+
+  .nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
+
 </style>
