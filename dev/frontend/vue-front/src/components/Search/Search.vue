@@ -3,32 +3,39 @@
     <div class="header">
       <h1>Spinal Cord Injury Search Hub</h1>
       <form class="search" action="">
-        <input type="search" class = "ti" placeholder="Search author..." required ref="author_input">
-        <input type="search" class = "ti" placeholder="Search term..." required ref="term_input">
+        <input type="search" class = "ti" placeholder="Search author..." ref="author_input">
+        <input type="search" class = "ti" placeholder="Search term..." ref="term_input">
         <button type="submit" v-on:click="search_click()">
           Search
         </button>
       </form>
     </div>
     <!--    filter by date  and sort modified -->
-    <div class = "search_filter">
-      <div class="filters_time" v-if="show()">
+    <div class = "search_filter" v-if="show()">
+      <div class="filters_time">
         <h3 class="filter" @click="search_filter('all')">Any time</h3>
-        <h3 class="filter" @click="search_filter('=2018')">Since 2018</h3>
-        <h3 class="filter" @click="search_filter('=2017')">Since 2017</h3>
-        <h3 class="filter" @click="search_filter('=2014')">Since 2014</h3>
+        <h3 class="filter" @click="search_filter('>=2018')">Since 2018</h3>
+        <h3 class="filter" @click="search_filter('>=2017')">Since 2017</h3>
+        <h3 class="filter" @click="search_filter('>=2014')">Since 2014</h3>
         <h3 class="filter" @click="search_filter('<2014')">Before 2014</h3>
       </div>
-      <div class="filters_sort" v-if="show()">
+      <div class="filters_sort" >
         <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 class="filter" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
     </div>
     <!--    result list -->
-    <div class="articles">
+    <div class="articles" v-show="result.result">
       <div class="article" v-for="(item, index) in result.result" :key="item.id">
-        <h2 class="title" @click="goTo(index)">{{item.title}}</h2>
-        <h3 class="author">{{item.author}},{{item.pdate}}</h3>
+        <p class="title" @click="goTo(index)">{{item.title}}</p>
+        <p class="author">{{item.author}},{{item.pdate}}</p>
+      </div>
+    </div>
+    <div class="duplicate" v-show="result.duplicate">
+      <p class="dup_title">Are you searching for?</p>
+      <div class="dup_form" v-for="(item, index) in result.duplicate" :key="item.id" @click="search_author_id(index)">
+        <p class="name">{{item.author_name}},{{item.author_fname}}</p>
+        <p class="des">{{item.des}}</p>
       </div>
     </div>
     <div>
@@ -39,14 +46,15 @@
               :next-text="'Next'"
               :container-class="'className'">
       </paginate>-->
-      <vue-paginate-al :totalPage="5" @btnClick="search(i)"></vue-paginate-al>
+      <vue-paginate-al :totalPage="5" @btnClick="search(i)" v-if="show()"></vue-paginate-al>
     </div>
+    <svg width="960" height="600"></svg>
   </div>
 
 </template>
 
-<!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
 <script>
+import * as d3 from 'd3'
 import VuePaginateAl from 'vue-paginate-al'
 export default {
   name: 'Home',
@@ -62,7 +70,8 @@ export default {
         author_search: '',
         page: '',
         filter: 'all',
-        sort: 'relative'
+        sort: 'relative',
+        author_id: ''
       },
       result: {}
     }
@@ -72,7 +81,9 @@ export default {
   },
   methods: {
     search (i) {
+      this.result = {}
       this.request.author_search = this.$refs.author_input.value
+      console.log(this.request.author_search)
       this.request.term = this.$refs.term_input.value
       this.request.page = i
       this.$http.post(this.api, this.request)
@@ -106,14 +117,92 @@ export default {
       this.request.sort = sort
       this.search(0)
     },
+    search_author_id (index) {
+      this.request.author_id = this.result.duplicate[index].author_id
+      this.request.method = 'search_author_id'
+      this.search(0)
+    },
     show () {
-      if (this.request.method === 'search_recent') {
+      if (this.request.method === 'search_recent' || this.result.duplicate || !this.result.result) {
         return false
       } else {
         return true
       }
     }
   }
+}
+
+var svg = d3.select('svg')
+var width = +svg.attr('width')
+var height = +svg.attr('height')
+
+var color = d3.scaleOrdinal(d3.schemeCategory20)
+
+var simulation = d3.forceSimulation()
+  .force('link', d3.forceLink().id(function (d) { return d.id }))
+  .force('charge', d3.forceManyBody())
+  .force('center', d3.forceCenter(width / 2, height / 2))
+
+d3.json('miserables.json', function (error, graph) {
+  if (error) throw error
+
+  var link = svg.append('g')
+    .attr('class', 'links')
+    .selectAll('line')
+    .data(graph.links)
+    .enter().append('line')
+    .attr('stroke-width', function (d) { return Math.sqrt(d.value) })
+
+  var node = svg.append('g')
+    .attr('class', 'nodes')
+    .selectAll('circle')
+    .data(graph.nodes)
+    .enter().append('circle')
+    .attr('r', 5)
+    .attr('fill', function (d) { return color(d.group) })
+    .call(d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended))
+
+  node.append('title')
+    .text(function (d) { return d.id })
+
+  simulation
+    .nodes(graph.nodes)
+    .on('tick', ticked)
+
+  simulation.force('link')
+    .links(graph.links)
+
+  function ticked () {
+    link
+      .attr('x1', function (d) { return d.source.x })
+      .attr('y1', function (d) { return d.source.y })
+      .attr('x2', function (d) { return d.target.x })
+      .attr('y2', function (d) { return d.target.y })
+
+    node
+      .attr('cx', function (d) { return d.x })
+      .attr('cy', function (d) { return d.y })
+  }
+})
+
+function dragstarted (d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+  d.fx = d.x
+  d.fy = d.y
+}
+
+function dragged (d) {
+  d.fx = d3.event.x
+  d.fy = d3.event.y
+}
+
+function dragended (d) {
+  if (!d3.event.active) simulation.alphaTarget(0)
+  d.fx = null
+  d.fy = null
 }
 </script>
 
@@ -174,13 +263,14 @@ export default {
   }
   /* css for filter*/
  .search_filter {
-   height: 260px;
+   height: 300px;
    width: 150px;
    margin: 60px 30px 200px 20px;
    padding:0;
+   float: left;
  }
  .filters_time {
-   height: 100px;
+   height: 150px;
    width: 100px;
    display: inline-block;
    margin-top: 10px;
@@ -188,7 +278,7 @@ export default {
    font-weight: normal;
  }
  .filters_sort {
-   height: 100px;
+   height: 60px;
    width: 150px;
    display: inline-block;
    margin-top: 10px;
@@ -304,6 +394,38 @@ export default {
       margin: 0;
       padding: 0;
       text-align: -webkit-left;
+  }
+  .duplicate {
+    margin-top: 10px;
+    width:100%;
+    /*float: left;*/
+  }
+  .dup_form {
+    width: 70%;
+    border-radius: 5px;
+    border: 2px solid #fff;
+    text-align: left;
+    box-shadow: 5px 4px 11px 0px rgba(136, 136, 136, 0.61);
+    margin: 30px 15%;
+    cursor:pointer;
+  }
+  .dup_title {
+    font-size: 33px;
+    color: black;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+  }
+  .name {
+    font-size: 17px;
+    color: black;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+  }
+  .des {
+    font-size: 14px;
+    color: black;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
   }
   .links line {
     stroke: #999;
