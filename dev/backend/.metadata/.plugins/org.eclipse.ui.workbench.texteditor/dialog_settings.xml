@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="orcid" key="selection"/>
+		<item value="effected" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="effected"/>
+			<item value="MAX_POOL_SIZE"/>
+			<item value="year"/>
+			<item value="toLowerCase()"/>
+			<item value="sort"/>
+			<item value="print"/>
 			<item value="orcid"/>
 			<item value="select"/>
-			<item value="insert"/>
-			<item value="insertTableAuthorAricle"/>
-			<item value="List"/>
-			<item value="pub"/>
-			<item value="elocation"/>
-			<item value="publisher_name"/>
 		</list>
 		<list key="replacehistory">
 		</list>
