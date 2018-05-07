@@ -3,21 +3,30 @@
     <div class="header">
       <h1>Spinal Cord Injury Search Hub</h1>
       <form class="search" action="">
-        <input type="search" class = "ti" placeholder="Search author..." ref="author_input">
-        <input type="search" class = "ti" placeholder="Search term..." ref="term_input">
+        <input type="search" class = "ti" placeholder="Search author..." ref="author_input" maxlength="80">
+        <input type="search" class = "ti" placeholder="Search term..." ref="term_input" maxlength="80">
         <button type="submit" v-on:click="search_click()">
           Search
         </button>
       </form>
     </div>
     <!--    filter by date  and sort modified -->
-    <div class = "search_filter" v-if="show()">
+    <!--<div class = "search_filter" v-if="show()">-->
+    <div class = "search_filter">
       <div class="filters_time">
         <h3 class="filter" @click="search_filter('all')">Any time</h3>
         <h3 class="filter" @click="search_filter('>=2018')">Since 2018</h3>
         <h3 class="filter" @click="search_filter('>=2017')">Since 2017</h3>
         <h3 class="filter" @click="search_filter('>=2014')">Since 2014</h3>
         <h3 class="filter" @click="search_filter('<2014')">Before 2014</h3>
+        <h3 class="filter" @click="clickFunc()">Custom range</h3>
+        <div class="customTime">
+          <input class = "custom" placeholder="start" ref="startTime" maxlength="6">
+          <input class = "custom" placeholder="end" ref="endTime" maxlength="6">
+          <button type="submit" class="click" v-on:click="search_click()">
+            Search
+          </button>
+        </div>
       </div>
       <div class="filters_sort" >
         <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
@@ -132,7 +141,7 @@ export default {
   }
 }
 
-var svg = d3.select('svg')
+/* var svg = d3.select('svg')
 var width = +svg.attr('width')
 var height = +svg.attr('height')
 
@@ -203,7 +212,7 @@ function dragended (d) {
   if (!d3.event.active) simulation.alphaTarget(0)
   d.fx = null
   d.fy = null
-}
+} */
 </script>
 
 <style scoped>
@@ -264,13 +273,13 @@ function dragended (d) {
   /* css for filter*/
  .search_filter {
    height: 300px;
-   width: 150px;
+   width: 200px;
    margin: 60px 30px 200px 20px;
    padding:0;
    float: left;
  }
  .filters_time {
-   height: 150px;
+   height: 220px;
    width: 100px;
    display: inline-block;
    margin-top: 10px;
@@ -299,6 +308,51 @@ function dragended (d) {
     font-size: 1.2em;
     font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
   }
+  .customTime {
+    width:150px;
+    height:30px;
+    padding-left: 0;
+    margin-top:0;
+    margin-left:-5px;
+  }
+  .custom {
+    width: 50px;
+    height: 20px;
+    padding: 0;
+    float: left;
+    color: black;
+    font-weight: bolder;
+    font-size: 1.2em;
+    border-radius: 2px;
+    border: 1px solid black;
+    background: white;
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+  .click {
+    position: relative;
+    margin-top: 10px;
+    margin-left: 30px;
+    float:left;
+    padding: 0;
+    cursor: pointer;
+    height: 20px;
+    width: 50px;
+    color: black;
+    font-weight: bold;
+    font-size: 0.3em;
+    background: lightgrey;
+    border: 1px solid black;
+    border-radius:2px;}
+
+  .click:hover {
+    background: #fff;
+    color:#EE6352;}
+  .click:active {
+    box-shadow: 0px 0px 12px 0px rgb(213, 225, 210);}
+
+  .click:focus {outline: 0;}
+
   .search  {
     width: 700px;
     height: 40px;
