@@ -1,10 +1,10 @@
 <template>
-  <div class="home">
+  <div class="content">
     <div class="header">
       <h1>Spinal Cord Injury Search Hub</h1>
       <form class="search" action="">
-        <input type="search" class = "ti" placeholder="Search author..." ref="author_input" maxlength="80">
-        <input type="search" class = "ti" placeholder="Search term..." ref="term_input" maxlength="80">
+        <input type="search" class = "search_input_author" placeholder="Search author..." ref="author_input" maxlength="80">
+        <input type="search" class = "search_input_term" placeholder="Search keywords..." ref="term_input" maxlength="80">
         <button type="submit" v-on:click="search_click()">
           Search
         </button>
@@ -12,17 +12,17 @@
     </div>
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
-    <div class = "search_filter">
+    <div class = "search_filter" v-if="show()">
       <div class="filters_time">
         <h3 class="filter" @click="search_filter('all')">Any time</h3>
         <h3 class="filter" @click="search_filter('>=2018')">Since 2018</h3>
-        <h3 class="filter" @click="search_filter('>=2017')">Since 2017</h3>
-        <h3 class="filter" @click="search_filter('>=2014')">Since 2014</h3>
-        <h3 class="filter" @click="search_filter('<2014')">Before 2014</h3>
+        <h3 class="filter" @click="search_filter('>=2016')">Since 2016</h3>
+        <h3 class="filter" @click="search_filter('>=2012')">Since 2012</h3>
+        <h3 class="filter" @click="search_filter('<2012')">Before 2012</h3>
         <h3 class="filter" @click="clickFunc()">Custom range</h3>
         <div class="customTime">
-          <input class = "custom" placeholder="start" ref="startTime" maxlength="6">
-          <input class = "custom" placeholder="end" ref="endTime" maxlength="6">
+          <input class = "custom" placeholder="start" ref="startTime" maxlength="4">
+          <input class = "custom" placeholder="end" ref="endTime" maxlength="4">
           <button type="submit" class="click" v-on:click="search_click()">
             Search
           </button>
@@ -34,7 +34,22 @@
       </div>
     </div>
     <!--    result list -->
+    <p class="result_title_recent" v-if="request.method === 'search_recent'">
+      Here are 10 recent articles
+    </p>
+    <div class="articles_recent" v-if="request.method === 'search_recent' && result.result ">
+      <p class="result_title" v-show="result.total_num">
+        About {{result.total_num}} results:
+      </p>
+      <div class="article" v-for="(item, index) in result.result" :key="item.id">
+        <p class="title" @click="goTo(index)">{{item.title}}</p>
+        <p class="author">{{item.author}},{{item.pdate}}</p>
+      </div>
+    </div>
     <div class="articles" v-show="result.result">
+      <p class="result_title" v-show="result.total_num">
+        About {{result.total_num}} results
+      </p>
       <div class="article" v-for="(item, index) in result.result" :key="item.id">
         <p class="title" @click="goTo(index)">{{item.title}}</p>
         <p class="author">{{item.author}},{{item.pdate}}</p>
@@ -46,16 +61,6 @@
         <p class="name">{{item.author_name}},{{item.author_fname}}</p>
         <p class="des">{{item.des}}</p>
       </div>
-    </div>
-    <div>
-      <!--<paginate
-              :page-count="20"
-              :click-handler="search"
-              :prev-text="'Prev'"
-              :next-text="'Next'"
-              :container-class="'className'">
-      </paginate>-->
-      <vue-paginate-al :totalPage="5" @btnClick="search(i)" v-if="show()"></vue-paginate-al>
     </div>
     <svg width="960" height="600"></svg>
   </div>
@@ -82,19 +87,20 @@ export default {
         sort: 'relative',
         author_id: ''
       },
-      result: {}
+      result: {},
+      isRecent: true
     }
   },
   mounted: function () {
     this.search_recent()
   },
   methods: {
-    search (i) {
+    search () {
+      this.isRecent = false
       this.result = {}
       this.request.author_search = this.$refs.author_input.value
       console.log(this.request.author_search)
       this.request.term = this.$refs.term_input.value
-      this.request.page = i
       this.$http.post(this.api, this.request)
         .then((response) => {
           console.log(response)
@@ -112,24 +118,24 @@ export default {
       this.request.filter = 'all'
       this.request.sort = 'relative'
       this.request.method = 'search'
-      this.search(0)
+      this.search()
     },
     search_recent () {
       this.request.method = 'search_recent'
-      this.search(0)
+      this.search()
     },
     search_filter (filter) {
       this.request.filter = filter
-      this.search(0)
+      this.search()
     },
     search_sort (sort) {
       this.request.sort = sort
-      this.search(0)
+      this.search()
     },
     search_author_id (index) {
       this.request.author_id = this.result.duplicate[index].author_id
       this.request.method = 'search_author_id'
-      this.search(0)
+      this.search()
     },
     show () {
       if (this.request.method === 'search_recent' || this.result.duplicate || !this.result.result) {
@@ -216,11 +222,10 @@ function dragended (d) {
 </script>
 
 <style scoped>
-  .home {
+  .content {
     width:100%;
-    height:800px;
-    background-repeat: no-repeat;
-    background-size: cover;
+    height:1400px;
+    background: #F2F2F2;
   }
   .header {
     margin-top:0;
@@ -229,7 +234,7 @@ function dragended (d) {
     background-image:url("../../assets/searchnew.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    border-radius: 0px 0px 70px 70px;
+    box-shadow: 0 2px 2px rgba(0,0,1,0.4);
   }
   h1{
     font-size: 3rem;
@@ -273,25 +278,25 @@ function dragended (d) {
   /* css for filter*/
  .search_filter {
    height: 300px;
-   width: 200px;
-   margin: 60px 30px 200px 20px;
-   padding:0;
+   width: 18%;
+   margin-left: 2%;
+   margin-right: 1%;
+   margin-top: 20px;
+   padding: 1%;
    float: left;
+   background: #fff;
+   box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
  }
  .filters_time {
-   height: 220px;
-   width: 100px;
+   height: 70%;
+   width: 100%;
    display: inline-block;
-   margin-top: 10px;
-   float:left;
-   font-weight: normal;
  }
  .filters_sort {
-   height: 60px;
-   width: 150px;
+   height: 30%;
+   width: 100%;
    display: inline-block;
-   margin-top: 10px;
-   float:left;
+   margin-top: 15%;
    font-weight: normal;
   }
   .filter:hover {
@@ -316,23 +321,23 @@ function dragended (d) {
     margin-left:-5px;
   }
   .custom {
-    width: 50px;
+    width: 35%;
     height: 20px;
-    padding: 0;
+    padding: 5%;
     float: left;
     color: black;
     font-weight: bolder;
-    font-size: 1.2em;
+    font-size: 0.8em;
     border-radius: 2px;
     border: 1px solid black;
     background: white;
     margin-top: 5px;
-    margin-left: 5px;
+    margin-left: 4%;
   }
   .click {
     position: relative;
     margin-top: 10px;
-    margin-left: 30px;
+    margin-left: 4%;
     float:left;
     padding: 0;
     cursor: pointer;
@@ -354,24 +359,31 @@ function dragended (d) {
   .click:focus {outline: 0;}
 
   .search  {
-    width: 700px;
-    height: 40px;
+    width: 100%;
+    height: auto;
     position:relative;
     margin: 1px auto;
   }
 
   .search input {
-    width: 340px;
+    width: 40%;
     height: 41px;
     padding: 10px 10px;
-    margin-left: 10px;
-    float: right;
+    float: left;
     color: #14C7FF;
     font-weight: bolder;
     font-size: 1.2em;
     border-radius: 5px;
     border: 2px solid #fff;
     background: rgba(0, 0, 0, 0.45);
+  }
+  .search_input_author {
+    margin-left: 8%;
+    margin-right: 2%;
+  }
+  .search_input_term {
+    margin-left: 2%;
+    margin-right: 8%;
   }
   ::placeholder {
     color: #D0CED2;
@@ -392,6 +404,7 @@ function dragended (d) {
   .search button {
     position: relative;
     margin-top: 10px;
+    margin-right: 8%;
     float: right;
     padding: 0;
     cursor: pointer;
@@ -411,16 +424,37 @@ function dragended (d) {
     box-shadow: 0px 0px 12px 0px rgb(213, 225, 210);}
 
   .search button:focus {outline: 0;}
-
+  .articles_recent{
+    width: 84%;
+    height: 600px;
+    margin-top: 20px;
+    margin-left: 8%;
+    margin-right: 8%;
+    background: #fff;
+    overflow: scroll;
+    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+  }
   .articles{
-    width: 1200px;
-    height: auto;
-    margin-top: 64px;
-    margin-left:30px;
+    width: 76%;
+    height: 600px;
+    margin-top: 20px;
+    margin-left: 1%;
+    margin-right: 2%;
+    background: #fff;
+    overflow: scroll;
+    -webkit-box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+    float: right;
+  }
+  .result_title_recent {
+    font-size: 28px;
+    margin-top: 20px;
+    font-weight: bolder ;
+    font-family: "Times New Roman", Times, serif;
   }
   .title {
     float: none;
-    width: 980px;
+    width: 100%;
     font-size: 20px;
     color: black;
     font-weight: bold;
@@ -428,21 +462,27 @@ function dragended (d) {
     margin: 0;
     padding: 0;
     text-align: -webkit-left;
-   /* overflow: hidden;
-    text-overflow:ellipsis;
-    white-space: nowrap;*/
     cursor:pointer;
   }
   .title:hover{
     background: transparent;
-    text-decoration:underline;color: #0074D9;}
-  .article{
-    width: 980px;
-    margin-bottom: 15px;
+    text-decoration:underline;color: #257A9E;}
+  .article {
+    width: 100%;
+    padding: 15px 30px;
+  }
+  .result_title {
+    text-align: left;
+    padding-top: 2%;
+    padding-left: 5%;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #337ab7 ;
   }
   .author {
       font-size: 15px;
-      color: black;
+      color: dimgrey;
       font-family: "Times New Roman", Times, serif;
       float: none;
       margin: 0;
