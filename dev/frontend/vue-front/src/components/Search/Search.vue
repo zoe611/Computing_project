@@ -10,31 +10,115 @@
         </button>
       </form>
     </div>
+    <div class="line" v-if="result.line">
+      <p class="bar_title">The Number of Publications Each Year</p>
+      <d3-line :data="result.line" :options="{
+    // line config
+    stroke : '#ABC8E2',
+    strokeWidth : 2,
+
+    // axis config
+    axisXHeight : 25,
+    axisYWidth : 35,
+    axisFontSize : 14,
+
+    // circle config
+    circleRadius : 5,
+    circleColor : '#2F60A1',
+
+    // tooltip config
+    circleTitle : d  => d.value,
+
+    // curve config
+    curve : 'curveCardinal',
+
+    // axis label config
+    axisXLabel : '',
+    axisYLabel : '',
+    axisXLabelHeight : 30,
+    axisYLabelWidth : 20,
+    axisLabelFontSize : 12,
+    axisLabelFontWeight : 400,
+    axisLabelFontOpacity : 0.5
+}" width="100%" height="400px" :margin="{
+    left: 130,
+    top: 20,
+    right: 150,
+    bottom: 20
+}"></d3-line>
+    </div>
+    <div class="visual" v-if="request.method === 'search' && result.result && result.result !== 'no result'">
+      <div class="bar_chart" v-if="result.bar">
+        <p class="bar_title">The Number of Publications Each Year</p>
+        <d3-bar :data="result.bar" :options="{
+    // bar config
+    fill : '#ABC8E2',
+    stroke : '#ABC8E2',
+    fillOpacity : 1,
+    strokeOpacity : 1,
+
+    // axis font config
+    axisFontSize : 12,
+    axisFontWeight : 400,
+
+    // axis label config
+    axisYLabel : 'Number of publications',
+    axisXLabel : 'Year',
+    axisXLabelHeight : 30,
+    axisYLabelWidth : 30,
+
+    // axis label font config
+    axisLabelFontSize : 10,
+    axisLabelFontWeight : 350,
+    axisLabelFontOpacity : 0.5,
+
+    // axis lane config
+    axisXHeight : 25,
+    axisYWidth : 35,
+
+    isVertical : false,
+}" width="100%" height="400px" :margin="{
+    left: 0,
+    top: 10,
+    right: 0,
+    bottom: 10
+}"></d3-bar>
+      </div>
+      <div class="rank" v-if="result.rank">
+        <p class="rank_title">Author Rank for {{request.term}}</p>
+        <div class="rank-bar" v-for="(item,index) in result.rank" :key="item.id">
+          <p class="rank_name">{{item.name}}</p>
+          <p class="rank_value">{{item.value}}<span class="unit"> articles</span></p>
+          <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}"></div>
+        </div>
+      </div>
+    </div>
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
+    <div style="height:10px;width:100%;"></div>
     <div class = "search_filter" v-if="show()">
       <div class="filters_time">
-        <h3 class="filter" @click="search_filter('all')">Any time</h3>
-        <h3 class="filter" @click="search_filter('>=2018')">Since 2018</h3>
-        <h3 class="filter" @click="search_filter('>=2016')">Since 2016</h3>
-        <h3 class="filter" @click="search_filter('>=2012')">Since 2012</h3>
-        <h3 class="filter" @click="search_filter('<2012')">Before 2012</h3>
+        <h3 :class="request.filter === 'all' ? 'active_filter' : 'filter'" @click="search_filter('all')">Any time</h3>
+        <h3 :class="request.filter === '>=2018' ? 'active_filter': 'filter'" @click="search_filter('>=2018')">Since 2018</h3>
+        <h3 :class="request.filter === '>=2016' ? 'active_filter': 'filter'" @click="search_filter('>=2016')">Since 2016</h3>
+        <h3 :class="request.filter === '>=2012' ? 'active_filter': 'filter'" @click="search_filter('>=2012')">Since 2012</h3>
+        <h3 :class="request.filter === '<2012' ? 'active_filter': 'filter'" @click="search_filter('<2012')">Before 2012</h3>
         <h3 class="filter" @click="clickFunc()">Custom range</h3>
-        <div class="customTime">
-          <input class = "custom" placeholder="start" ref="startTime" maxlength="4">
-          <input class = "custom" placeholder="end" ref="endTime" maxlength="4">
-          <button type="submit" class="click" v-on:click="search_click()">
+        <div class="customTime" v-if="isCustom">
+          <input type="search" class = "custom" placeholder="start" ref="startTime" maxlength="4" required>
+          <input type="search" class = "custom" placeholder="end" ref="endTime" maxlength="4" required>
+          <button type="submit" class="click" v-on:click="search_filter_custom()">
             Search
           </button>
         </div>
       </div>
       <div class="filters_sort" >
-        <h3 class="filter" @click="search_sort('relative')">Sort by relevance</h3>
-        <h3 class="filter" @click="search_sort('sort_pubdate')">Sort by date</h3>
+        <h3 :class="request.sort === 'relative' ? 'active_filter': 'filter'" @click="search_sort('relative')">Sort by relevance</h3>
+        <h3 :class="request.sort === 'sort_pubdate' ? 'active_filter': 'filter'" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
     </div>
     <!--    result list -->
-    <p class="result_title_recent" v-if="request.method === 'search_recent'">
+    <p class="result_title_recent" v-if="request.method === 'search_recent' && result.result">
       Here are 10 recent articles
     </p>
     <div class="articles_recent" v-if="request.method === 'search_recent' && result.result ">
@@ -46,7 +130,7 @@
         <p class="author">{{item.author}},{{item.pdate}}</p>
       </div>
     </div>
-    <div class="articles" v-show="result.result">
+    <div class="articles" v-if="result.result !== 'no result' && result.result && request.method === 'search' ">
       <p class="result_title" v-show="result.total_num">
         About {{result.total_num}} results
       </p>
@@ -55,14 +139,19 @@
         <p class="author">{{item.author}},{{item.pdate}}</p>
       </div>
     </div>
-    <div class="duplicate" v-show="result.duplicate">
+    <div class="articles" v-if="result.result === 'no result'">
+      <p class="result_title">
+        There is no result for the search
+      </p>
+    </div>
+    <div class="duplica" v-if="result.duplicate">
       <p class="dup_title">Are you searching for?</p>
       <div class="dup_form" v-for="(item, index) in result.duplicate" :key="item.id" @click="search_author_id(index)">
         <p class="name">{{item.author_name}},{{item.author_fname}}</p>
         <p class="des">{{item.des}}</p>
+        <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about </p>
       </div>
     </div>
-    <svg width="960" height="600"></svg>
   </div>
 
 </template>
@@ -88,7 +177,10 @@ export default {
         author_id: ''
       },
       result: {},
-      isRecent: true
+      isRecent: true,
+      rank_max: -1,
+      rank_color: {0: '#E1E6FA', 1: '#C4D7ED', 2: '#ABC8E2', 3: '#4B7FB0', 4: '#2F60A1'},
+      isCustom: false
     }
   },
   mounted: function () {
@@ -97,15 +189,14 @@ export default {
   methods: {
     search () {
       this.isRecent = false
-      this.result = {}
       this.request.author_search = this.$refs.author_input.value
-      console.log(this.request.author_search)
       this.request.term = this.$refs.term_input.value
       this.$http.post(this.api, this.request)
         .then((response) => {
           console.log(response)
           if (response.bodyText !== 'empty search') {
             this.result = response.data
+            this.rank_max = this.result.rank_max
           }
           console.log(this.result.result)
         })
@@ -118,6 +209,7 @@ export default {
       this.request.filter = 'all'
       this.request.sort = 'relative'
       this.request.method = 'search'
+      this.isCustom = false
       this.search()
     },
     search_recent () {
@@ -134,7 +226,11 @@ export default {
     },
     search_author_id (index) {
       this.request.author_id = this.result.duplicate[index].author_id
-      this.request.method = 'search_author_id'
+      if (this.request.term !== '') {
+        this.request.method = 'search_author_id_term'
+      } else {
+        this.request.method = 'search_author_id'
+      }
       this.search()
     },
     show () {
@@ -143,6 +239,15 @@ export default {
       } else {
         return true
       }
+    },
+    clickFunc () {
+      this.isCustom = true
+    },
+    search_filter_custom () {
+      var start = this.$refs.startTime.value
+      var end = this.$refs.endTime.value
+      var filter = 'BETWEEN ' + start + ' AND ' + end
+      this.search_filter(filter)
     }
   }
 }
@@ -278,11 +383,11 @@ function dragended (d) {
   /* css for filter*/
  .search_filter {
    height: 300px;
-   width: 18%;
+   width: 12%;
    margin-left: 2%;
    margin-right: 1%;
    margin-top: 20px;
-   padding: 1%;
+   padding: 0.5%;
    float: left;
    background: #fff;
    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
@@ -311,6 +416,18 @@ function dragended (d) {
     text-align: left;
     cursor:pointer;
     font-size: 1.2em;
+    font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
+  }
+  .active_filter {
+    width: 150px;
+    float: left;
+    height: 10px;
+    display: vertical-align;
+    margin-top: 6px;
+    text-align: left;
+    cursor:pointer;
+    font-size: 1.2em;
+    color: red;
     font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
   }
   .customTime {
@@ -435,16 +552,16 @@ function dragended (d) {
     box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
   }
   .articles{
-    width: 76%;
+    width: 82.5%;
     height: 600px;
     margin-top: 20px;
-    margin-left: 1%;
+    margin-left: 0.5%;
     margin-right: 2%;
     background: #fff;
     overflow: scroll;
     -webkit-box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
     box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
-    float: right;
+    float: left;
   }
   .result_title_recent {
     font-size: 28px;
@@ -474,7 +591,7 @@ function dragended (d) {
   .result_title {
     text-align: left;
     padding-top: 2%;
-    padding-left: 5%;
+    padding-left: 30px;
     font-size: 1.5em;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
@@ -529,6 +646,74 @@ function dragended (d) {
   .nodes circle {
     stroke: #fff;
     stroke-width: 1.5px;
+  }
+  .bar_chart {
+    width: 45%;
+    /*background: #fff;*/
+    padding-right:10px;
+    margin-left: 2%;
+    margin-top: 20px;
+    float: left;
+  }
+  .bar_title {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #337ab7 ;
+  }
+  .rank {
+    width:45%;
+    float: right;
+    margin-right: 2%;
+    margin-top: 20px;
+  }
+  .rank_name {
+    float: left;
+    color: #001C1C;
+    line-height: 50px;
+    height: 40px;
+    font-size: 22px;
+    padding-left: 10px;
+    font-family: Georgia;
+  }
+  .rank_value {
+    float: right;
+    color: #001C1C;
+    line-height: 50px;
+    height: 40px;
+    font-size: 24px;
+    padding-right: 10px;
+    font-family: Georgia;
+  }
+  .unit {
+    font-size: 18px;
+  }
+  .bar {
+    height:100%;
+    box-shadow: 0 0 5px 5px rgba(0,0,1,0.03);
+  }
+  .rank-bar {
+    width: 100%;
+    height: 60px;
+  }
+  .visual {
+    height: 450px;
+  }
+  .rank_title {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #337ab7 ;
+    margin-bottom: 40px;
+  }
+  .line {
+    width: 84%;
+    background: #fff;
+    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+    margin-left: 8%;
+    margin-right: 8%;
+    margin-top: 50px;
+    padding-top: 30px;
   }
 
 </style>

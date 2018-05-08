@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
+import Vs from 'd3-vs'
+
+Vue.use(Vs)
 Vue.use(VueResource)
 
 Vue.config.productionTip = false
