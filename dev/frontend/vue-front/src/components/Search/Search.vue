@@ -47,7 +47,7 @@
     bottom: 20
 }"></d3-line>
     </div>
-    <div class="visual" v-if="request.method === 'search' && result.result && result.result !== 'no result'">
+    <div class="visual" v-if="request.method === 'search' && result.bar && result.result !== 'no result'">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
         <d3-bar :data="result.bar" :options="{
@@ -121,7 +121,7 @@
     <div class="loading" v-if="loading">
       <Spinner class="load" name="folding-cube" color="#14C7FF"/>
     </div>
-    <p class="result_title_recent" v-if="request.method === 'search_recent' && result.result">
+    <p class="result_title_recent" v-if="request.method === 'search_recent' && result.result ">
       Here are 10 recent articles
     </p>
     <div class="articles_recent" v-if="request.method === 'search_recent' && result.result ">
@@ -224,10 +224,12 @@ export default {
       this.search()
     },
     search_filter (filter) {
+      this.result.result = null
       this.request.filter = filter
       this.search()
     },
     search_sort (sort) {
+      this.result.result = null
       this.request.sort = sort
       this.search()
     },
@@ -242,7 +244,7 @@ export default {
       this.search()
     },
     show () {
-      if (this.request.method === 'search_recent' || this.result.duplicate || !this.result.result) {
+      if (this.request.method === 'search_recent' || this.result.duplicate || !this.result.bar) {
         return false
       } else {
         return true
@@ -667,9 +669,9 @@ export default {
     stroke-width: 1.5px;
   }
   .load {
-    width:120px;
-    height: 120px;
-    margin-top: 220px;
+    width:150px;
+    height: 150px;
+    margin-top: 200px;
     margin-left: 43%;
     margin-right: 8%;
   }
