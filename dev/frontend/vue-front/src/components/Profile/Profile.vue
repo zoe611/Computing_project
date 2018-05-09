@@ -101,7 +101,7 @@ export default {
       .data(that.links)
       .enter().append('line')
       .attr('stroke', 'blue')
-      .attr('stroke-width', function (d) { return d.value})
+      .attr('stroke-width', function (d) { return d.value })
     console.log(that.links)
     console.log('testtest')
     that.simulation.on('tick', function ticked () {
@@ -113,7 +113,7 @@ export default {
       that.nodes
         .attr('cx', function (d) { return d.x })
         .attr('cy', function (d) { return d.y })
-      })
+    })
     console.log('testtest')
   }
 }

@@ -118,6 +118,9 @@
       </div>
     </div>
     <!--    result list -->
+    <div class="loading" v-if="loading">
+      <Spinner class="load" name="folding-cube" color="#14C7FF"/>
+    </div>
     <p class="result_title_recent" v-if="request.method === 'search_recent' && result.result">
       Here are 10 recent articles
     </p>
@@ -153,16 +156,16 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
 import * as d3 from 'd3'
 import VuePaginateAl from 'vue-paginate-al'
+import Spinner from 'vue-spinkit'
 export default {
   name: 'Home',
   components: {
-    VuePaginateAl
+    Spinner
   },
   data () {
     return {
@@ -176,17 +179,7 @@ export default {
         sort: 'relative',
         author_id: ''
       },
-      svg: null,
-      graph: null,
-      links: null,
-      nodes: null,
-      simulation: null,
-      settings: {
-        strokeColor: '#29B5FF',
-        width: 100,
-        svgWigth: 960,
-        svgHeight: 600
-      },
+      loading: false,
       result: {},
       isRecent: true,
       rank_max: -1,
@@ -200,6 +193,7 @@ export default {
   methods: {
     search () {
       this.isRecent = false
+      this.loading = true
       this.request.author_search = this.$refs.author_input.value
       this.request.term = this.$refs.term_input.value
       this.$http.post(this.api, this.request)
@@ -208,6 +202,7 @@ export default {
           if (response.bodyText !== 'empty search') {
             this.result = response.data
             this.rank_max = this.result.rank_max
+            this.loading = false
           }
           console.log(this.result.result)
         })
@@ -264,79 +259,6 @@ export default {
     }
   }
 }
-
-/* var svg = d3.select('svg')
-var width = +svg.attr('width')
-var height = +svg.attr('height')
-
-var color = d3.scaleOrdinal(d3.schemeCategory20)
-
-var simulation = d3.forceSimulation()
-  .force('link', d3.forceLink().id(function (d) { return d.id }))
-  .force('charge', d3.forceManyBody())
-  .force('center', d3.forceCenter(width / 2, height / 2))
-
-d3.json('miserables.json', function (error, graph) {
-  if (error) throw error
-
-  var link = svg.append('g')
-    .attr('class', 'links')
-    .selectAll('line')
-    .data(graph.links)
-    .enter().append('line')
-    .attr('stroke-width', function (d) { return Math.sqrt(d.value) })
-
-  var node = svg.append('g')
-    .attr('class', 'nodes')
-    .selectAll('circle')
-    .data(graph.nodes)
-    .enter().append('circle')
-    .attr('r', 5)
-    .attr('fill', function (d) { return color(d.group) })
-    .call(d3.drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended))
-
-  node.append('title')
-    .text(function (d) { return d.id })
-
-  simulation
-    .nodes(graph.nodes)
-    .on('tick', ticked)
-
-  simulation.force('link')
-    .links(graph.links)
-
-  function ticked () {
-    link
-      .attr('x1', function (d) { return d.source.x })
-      .attr('y1', function (d) { return d.source.y })
-      .attr('x2', function (d) { return d.target.x })
-      .attr('y2', function (d) { return d.target.y })
-
-    node
-      .attr('cx', function (d) { return d.x })
-      .attr('cy', function (d) { return d.y })
-  }
-})
-
-function dragstarted (d) {
-  if (!d3.event.active) simulation.alphaTarget(0.3).restart()
-  d.fx = d.x
-  d.fy = d.y
-}
-
-function dragged (d) {
-  d.fx = d3.event.x
-  d.fy = d3.event.y
-}
-
-function dragended (d) {
-  if (!d3.event.active) simulation.alphaTarget(0)
-  d.fx = null
-  d.fy = null
-} */
 </script>
 
 <style scoped>
@@ -743,5 +665,12 @@ function dragended (d) {
   .nodes circle {
     stroke: #fff;
     stroke-width: 1.5px;
+  }
+  .load {
+    width:120px;
+    height: 120px;
+    margin-top: 220px;
+    margin-left: 43%;
+    margin-right: 8%;
   }
 </style>
