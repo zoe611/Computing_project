@@ -152,6 +152,8 @@
         <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about </p>
       </div>
     </div>
+    <p @click="createSvg()">test</p>
+    <div id="tst"></div>
   </div>
 
 </template>
@@ -176,6 +178,17 @@ export default {
         sort: 'relative',
         author_id: ''
       },
+      svg: null,
+      graph: null,
+      links: null,
+      nodes: null,
+      simulation: null,
+      settings: {
+        strokeColor: '#29B5FF',
+        width: 100,
+        svgWigth: 960,
+        svgHeight: 600
+      },
       result: {},
       isRecent: true,
       rank_max: -1,
@@ -185,8 +198,68 @@ export default {
   },
   mounted: function () {
     this.search_recent()
+    this.$http.post('http://43.240.98.137/test3.php', this.request)
+      .then((response) => {
+        this.graph = response.data
+        console.log(this.graph.nodes)
+      })
   },
   methods: {
+    createSvg () {
+      console.log(this.graph)
+      var that = this
+      that.svg = d3.select('#tst')
+        .append('svg')
+        .attr('width', 960)
+        .attr('height', 600)
+      that.simulation = d3.forceSimulation(that.graph.nodes)
+        .force('link', d3.forceLink(that.graph.links).distance(100).strength(0.1))
+        .force('charge', d3.forceManyBody())
+        .force('center', d3.forceCenter(that.settings.svgWigth / 2, that.settings.svgHeight / 2))
+      that.nodes = d3.select('svg').append('g')
+        .attr('class', 'nodes')
+        .selectAll('circle')
+        .data(that.graph.nodes)
+        .enter().append('circle')
+        .attr('r', 20)
+        .attr('fill', 'red')
+        .call(d3.drag()
+          .on('start', function dragstarted (d) {
+            if (!d3.event.active) that.simulation.alphaTarget(0.3).restart()
+            d.fx = d.x
+            d.fy = d.y
+          })
+          .on('drag', function dragged (d) {
+            d.fx = d3.event.x
+            d.fy = d3.event.y
+          })
+          .on('end', function dragended (d) {
+            if (!d3.event.active) that.simulation.alphaTarget(0)
+            d.fx = null
+            d.fy = null
+          }))
+      console.log(that.nodes)
+      console.log('testtest')
+      that.links = d3.select('svg').append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(that.graph.links)
+        .enter().append('line')
+        .attr('stroke-width', function (d) { return Math.sqrt(d.value) })
+      console.log(that.links)
+      console.log('testtest')
+      that.simulation.on('tick', function ticked () {
+        that.links
+          .attr('x1', function (d) { return d.source.x })
+          .attr('y1', function (d) { return d.source.y })
+          .attr('x2', function (d) { return d.target.x })
+          .attr('y2', function (d) { return d.target.y })
+        that.nodes
+          .attr('cx', function (d) { return d.x })
+          .attr('cy', function (d) { return d.y })
+      })
+      console.log('testtest')
+    },
     search () {
       this.isRecent = false
       this.request.author_search = this.$refs.author_input.value
@@ -715,5 +788,20 @@ function dragended (d) {
     margin-top: 50px;
     padding-top: 30px;
   }
-
+  .svg-container {
+    display: table;
+    border: 1px solid #f8f8f8;
+    box-shadow: 1px 2px 4px rgba(0, 0, 0, .5);
+  }
+  label {
+    display: block;
+  }
+  .links line {
+    stroke: #999;
+    stroke-opacity: 0.6;
+  }
+  .nodes circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
 </style>
