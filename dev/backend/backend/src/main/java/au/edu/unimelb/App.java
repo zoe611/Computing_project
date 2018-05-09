@@ -63,22 +63,7 @@ public class App {
 		App app = new App();
 		app.run();
 	}
-
-	// public static void test() {
-	// BaseNetworkAccess baseNet = new BaseNetworkAccess();
-	// URI uri;
-	// try {
-	// uri = baseNet.buildSummaryRequestURI("23436693");
-	// String result = baseNet.httpGet(uri);
-	// JSONObject result_json = new JSONObject(result);
-	// System.out.println(result_json);
-	// } catch (URISyntaxException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	//
-	// }
-	//
+	
 	/**
 	 * UPDATE THE DATABASE
 	 */
@@ -86,15 +71,15 @@ public class App {
 		String pathname = "src/main/resources/searchterms.txt";
 		// create the terms_idlist table
 		try {
-			// create the terms_idlist table
-			List<String> searchTerms = readInputFile(pathname);
-			for (String term : searchTerms) {
-				List idList = search(term);
-				storeToDB(idList, term);
-			}
-			System.out.println("table terms_idlist is updated.");
-			createTableArticle();
-			System.out.println("table aritcles is updated.");
+//			// create the terms_idlist table
+//			List<String> searchTerms = readInputFile(pathname);
+//			for (String term : searchTerms) {
+//				List idList = search(term);
+//				storeToDB(idList, term);
+//			}
+//			System.out.println("table terms_idlist is updated.");
+//			createTableArticle();
+//			System.out.println("table aritcles is updated.");
 			updateArticleTable();
 			System.out.println("table aritcles is detail updated.");
 		} catch (Exception e) {
@@ -316,12 +301,17 @@ public class App {
 		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
 		ResultSet resultSet = command.executeSelect();
 		while (resultSet.next()) {
-			String article_id = resultSet.getString("article_id");
-			URI uri = baseNet.buildDetailRequestURI(article_id);
-			String result = baseNet.httpGet(uri);
-			String lines[] = formateResult(result);
-			processDetailAbstract(lines, article_id);
-			createTableAuthor(article_id, lines);
+			try {
+				String article_id = resultSet.getString("article_id");
+				URI uri = baseNet.buildDetailRequestURI(article_id);
+				String result = baseNet.httpGet(uri);
+				String lines[] = formateResult(result);
+				processDetailAbstract(lines, article_id);
+				createTableAuthor(article_id, lines);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}
 	}
 
