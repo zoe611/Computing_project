@@ -12,13 +12,20 @@ export default {
     return {
       nodes: [
         {
-          id: 'Alice'
+          name: 'Alice',
+          id: 2407
         },
         {
-          id: 'Bob'
+          name: 'Bob',
+          id: 2247
         },
         {
-          id: 'Carol'
+          name: 'Carol',
+          id: 4567
+        },
+        {
+          name: 'Dog',
+          id: 5678
         }
       ],
       links: [
@@ -28,9 +35,14 @@ export default {
           value: 2
         },
         {
-          source: 1,
+          source: 0,
           target: 2,
           value: 3
+        },
+        {
+          source: 0,
+          target: 3,
+          value: 4
         }
       ],
       msg: 'Welcome to Your Vue.js App',
@@ -62,6 +74,9 @@ export default {
       .enter().append('circle')
       .attr('r', 20)
       .attr('fill', 'red')
+      .on('click', function (d) {
+        console.log(d.name)
+      })
       .call(d3.drag()
         .on('start', function dragstarted (d) {
           if (!d3.event.active) that.simulation.alphaTarget(0.3).restart()
@@ -76,7 +91,8 @@ export default {
           if (!d3.event.active) that.simulation.alphaTarget(0)
           d.fx = null
           d.fy = null
-        }))
+        })
+      )
     console.log(that.nodes)
     console.log('testtest')
     that.links = d3.select('svg').append('g')

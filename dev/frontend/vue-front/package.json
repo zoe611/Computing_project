@@ -17,6 +17,7 @@
     "axios": "^0.18.0",
     "d3-vs": "^0.1.6",
     "vue": "^2.5.2",
+    "vue-d3-network": "^0.1.24",
     "vue-paginate-al": "^1.0.18",
     "vue-resource": "^1.5.0",
     "vue-router": "^3.0.1",
