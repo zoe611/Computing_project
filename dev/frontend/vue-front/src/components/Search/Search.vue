@@ -115,9 +115,18 @@
           </button>
         </div>
       </div>
-      <div class="filters_sort" >
+      <div class="filter_sort" >
         <h3 :class="request.sort === 'relative' ? 'active_filter': 'filter'" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 :class="request.sort === 'sort_pubdate' ? 'active_filter': 'filter'" @click="search_sort('sort_pubdate')">Sort by date</h3>
+      </div>
+      <div class="filter_term">
+        <h3 class="filter">Filter by keywords</h3>
+        <div class="customTime">
+          <input type="search" class = "custom_filter" placeholder="keyword" ref="keyword" maxlength="84" required>
+          <button type="submit" class="click" v-on:click="search_filter_term()">
+            Search
+          </button>
+        </div>
       </div>
     </div>
     <!--    result list -->
@@ -172,6 +181,8 @@ export default {
   },
   data () {
     return {
+      bar: null,
+      relation: null,
       nodes: null,
       links: null,
       api: 'http://localhost/test/Computing_project/search.php',
@@ -202,7 +213,8 @@ export default {
       isRecent: true,
       rank_max: -1,
       rank_color: {0: '#E1E6FA', 1: '#C4D7ED', 2: '#ABC8E2', 3: '#4B7FB0', 4: '#2F60A1'},
-      isCustom: false
+      isCustom: false,
+      isFilter: false
     }
   },
   mounted: function () {
@@ -221,6 +233,12 @@ export default {
             this.result = response.data
             this.rank_max = this.result.rank_max
             this.loading = false
+            if(response.author){
+              this.request.author_id = response.author.author_id
+              this.request.author_name = response.author.author_name
+              this.request.author_fname = response.author.author_fname
+              this.request.author_des = response.author.author_des
+            }
           }
           console.log(this.result.result)
         })
@@ -278,6 +296,12 @@ export default {
       this.result = {}
       this.search()
     },
+    search_filter_term () {
+      this.request.method = 'search_author_id_term'
+      this.$refs.term_input.value = this.$refs.keyword.value
+      this.result.result = null
+      this.search()
+    },
     show () {
       if (this.request.method === 'search_recent' || this.result.duplicate || !this.result.bar) {
         return false
@@ -288,6 +312,9 @@ export default {
     clickFunc () {
       this.isCustom = true
     },
+    clickFunc () {
+      this.isFilter = true
+    },
     search_filter_custom () {
       var start = this.$refs.startTime.value
       var end = this.$refs.endTime.value
@@ -296,6 +323,7 @@ export default {
     },
     showrelation () {
        if (this.result.relation) {
+         d3.select('.test').remove()
          this.nodes = this.result.relation.nodes
          this.links = this.result.relation.links
          this.showSvg()
@@ -438,7 +466,7 @@ export default {
   }
   /* css for filter*/
  .search_filter {
-   height: 300px;
+   height: 500px;
    width: 12%;
    margin-left: 2%;
    margin-right: 1%;
@@ -449,7 +477,7 @@ export default {
    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
  }
  .filters_time {
-   height: 70%;
+   height: 44%;
    width: 100%;
    display: inline-block;
  }
@@ -473,6 +501,13 @@ export default {
     cursor:pointer;
     font-size: 1.2em;
     font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
+  }
+  .filter_sort {
+    height: 30px;
+  }
+  .custom_filter {
+    margin-left: 5px;
+    margin-top: 5px;
   }
   .active_filter {
     width: 150px;
