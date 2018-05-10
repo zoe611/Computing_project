@@ -10,6 +10,10 @@
         </button>
       </form>
     </div>
+    <div class="author_bar" v-if="result.author">
+      <p class="author_name">{{result.author.author_name}}, {{result.author.author_fname}}</p>
+      <p class="author_des">{{result.author.author_des}}</p>
+    </div>
     <div class="line" v-if="result.line">
       <p class="bar_title">The Number of Publications Each Year</p>
       <d3-line :data="result.line" :options="{
@@ -119,7 +123,7 @@
         <h3 :class="request.sort === 'relative' ? 'active_filter': 'filter'" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 :class="request.sort === 'sort_pubdate' ? 'active_filter': 'filter'" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
-      <div class="filter_term">
+      <div class="filter_term" v-if="this.request.author_id && this.$refs.author_input.value.length == 0">
         <h3 class="filter">Filter by keywords</h3>
         <div class="customTime">
           <input type="search" class = "custom_filter" placeholder="keyword" ref="keyword" maxlength="84" required>
@@ -186,6 +190,7 @@ export default {
       nodes: null,
       links: null,
       api: 'http://localhost/test/Computing_project/search.php',
+//      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
         term: '',
@@ -201,8 +206,8 @@ export default {
       settings: {
         strokeColor: '#29B5FF',
         width: 100,
-        svgWigth: 400,
-        svgHeight: 400
+        svgWigth: 450,
+        svgHeight: 450
       },
       svg: null,
       graph: null,
@@ -224,8 +229,6 @@ export default {
     search () {
       this.isRecent = false
       this.loading = true
-      this.request.author_search = this.$refs.author_input.value
-      this.request.term = this.$refs.term_input.value
       this.$http.post(this.api, this.request)
         .then((response) => {
           console.log(response)
@@ -233,11 +236,11 @@ export default {
             this.result = response.data
             this.rank_max = this.result.rank_max
             this.loading = false
-            if(response.author){
-              this.request.author_id = response.author.author_id
-              this.request.author_name = response.author.author_name
-              this.request.author_fname = response.author.author_fname
-              this.request.author_des = response.author.author_des
+            if(this.result.author){
+              this.request.author_id = this.result.author.author_id
+              this.request.author_name = this.result.author.author_name
+              this.request.author_fname = this.result.author.author_fname
+              this.request.author_des = this.result.author.author_des
             }
           }
           console.log(this.result.result)
@@ -257,6 +260,8 @@ export default {
       this.request.author_des = ''
       this.isCustom = false
       this.result = {}
+      this.request.author_search = this.$refs.author_input.value
+      this.request.term = this.$refs.term_input.value
       this.search()
     },
     search_recent () {
@@ -266,11 +271,25 @@ export default {
     search_filter (filter) {
       this.result.result = null
       this.request.filter = filter
+      if (this.request.term !== '' && this.request.author_search !== '') {
+        this.request.method = 'search_author_id_term'
+      } else if(this.request.term === ''){
+        this.request.method = 'search_author_id'
+      } else {
+        this.request.method = 'search'
+      }
       this.search()
     },
     search_sort (sort) {
       this.result.result = null
       this.request.sort = sort
+      if (this.request.term !== '' && this.request.author_search !== '') {
+        this.request.method = 'search_author_id_term'
+      } else if(this.request.term === ''){
+        this.request.method = 'search_author_id'
+      } else {
+        this.request.method = 'search'
+      }
       this.search()
     },
     search_author_id (index) {
@@ -298,7 +317,7 @@ export default {
     },
     search_filter_term () {
       this.request.method = 'search_author_id_term'
-      this.$refs.term_input.value = this.$refs.keyword.value
+      this.request.term = this.$refs.keyword.value
       this.result.result = null
       this.search()
     },
@@ -308,6 +327,17 @@ export default {
       } else {
         return true
       }
+    },
+    search_relation (author_id,author_name,author_fname,author_des) {
+      this.request.author_id = author_id
+      this.request.author_name = author_name
+      this.request.author_fname = author_fname
+      this.request.author_des = author_des
+      this.request.method = 'search_author_id'
+      this.$refs.author_input.value = author_name
+      this.$refs.term_input.value = ''
+      this.result = {}
+      this.search()
     },
     clickFunc () {
       this.isCustom = true
@@ -339,6 +369,10 @@ export default {
         .attr('class', 'test')
         .attr('width', that.settings.svgWigth)
         .attr('height', that.settings.svgHeight)
+        .call(d3.zoom().scaleExtent([1,10]).on('zoom',function () {
+          svg.attr("transform", d3.event.transform)
+
+        }))
       var simulation = d3.forceSimulation(that.nodes)
         .force('link', d3.forceLink(that.links).distance(100).strength(0.1))
         .force('charge', d3.forceManyBody())
@@ -370,13 +404,14 @@ export default {
         })
       var circle = nodes
         .append('circle')
-        .attr('r', 20)
+        .attr('r', 10)
         .data(that.nodes)
         .attr('fill', function (d) {
           return d.color
         })
         .on('click', function (d) {
-          console.log(d.name)
+          console.log(d.id)
+          that.search_relation(d.id, d.name, d.fname, d.des)
         })
         .call(d3.drag()
           .on('start', function dragstarted (d) {
@@ -841,5 +876,29 @@ export default {
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
     color: #337ab7 ;
+  }
+  .author_bar {
+    margin-top: 30px;
+    background: #fff;
+    width: 96%;
+    margin-right: 2%;
+    margin-left: 2%;
+    padding: 10px;
+    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+  }
+  .author_name {
+    text-align: left;
+    color: black;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+  }
+  .author_des {
+    text-align: left;
+    margin-top: 5px;
+    color: dimgrey;
+    font-size: 1em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
   }
 </style>
