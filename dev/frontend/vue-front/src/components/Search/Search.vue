@@ -54,7 +54,7 @@
     <div class="visual" v-if="result.bar || result.rank || result.relation">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
-        <d3-bar :data="result.bar" :options="{
+        <d3-bar :data="bar" :options="{
     // bar config
     fill : '#ABC8E2',
     stroke : '#ABC8E2',
@@ -242,6 +242,9 @@ export default {
               this.request.author_fname = this.result.author.author_fname
               this.request.author_des = this.result.author.author_des
             }
+            if (this.result.bar) {
+              this.formBar()
+            }
           }
           console.log(this.result.result)
         })
@@ -347,6 +350,12 @@ export default {
       var end = this.$refs.endTime.value
       var filter = 'BETWEEN ' + start + ' AND ' + end
       this.search_filter(filter)
+    },
+    formBar () {
+      this.result.bar.forEach(function (item) {
+        item.value = Number(item.value)
+      })
+      this.bar = this.result.bar
     },
     showrelation () {
       if (this.result.relation) {
