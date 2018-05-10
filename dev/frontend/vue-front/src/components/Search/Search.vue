@@ -47,7 +47,7 @@
     bottom: 20
 }"></d3-line>
     </div>
-    <div class="visual" v-if="request.method === 'search' && result.bar && result.result !== 'no result'">
+    <div class="visual" v-if="result.bar || result.rank || result.relation">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
         <d3-bar :data="result.bar" :options="{
@@ -89,11 +89,11 @@
         <div class="rank-bar" v-for="(item,index) in result.rank" :key="item.id">
           <p class="rank_name">{{item.name}}</p>
           <p class="rank_value">{{item.value}}<span class="unit"> articles</span></p>
-          <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}"></div>
+          <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}" @click="search_rank(index)"></div>
         </div>
       </div>
     </div>
-    <div class="relation" v-if="showrelation()"></div>
+    <!--<div class="relation" v-if="showrelation()"></div>-->
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
     <div style="height:10px;width:100%;"></div>
@@ -134,7 +134,7 @@
         <p class="author">{{item.author}},{{item.pdate}}</p>
       </div>
     </div>
-    <div class="articles" v-if="result.result !== 'no result' && result.result && request.method === 'search' ">
+    <div class="articles" v-if="result.result !== 'no result' && result.result && request.method != 'search_recent' ">
       <p class="result_title" v-show="result.total_num">
         About {{result.total_num}} results
       </p>
@@ -153,7 +153,7 @@
       <div class="dup_form" v-for="(item, index) in result.duplicate" :key="item.id" @click="search_author_id(index)">
         <p class="name">{{item.author_name}},{{item.author_fname}}</p>
         <p class="des">{{item.des}}</p>
-        <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about </p>
+        <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about {{request.term}}</p>
       </div>
     </div>
   </div>
@@ -209,7 +209,7 @@ export default {
           value: 4
         }
       ],
-      api: 'http://43.240.98.137/test2.php',
+      api: 'http://localhost/test/Computing_project/search.php',
       request: {
         method: '',
         term: '',
@@ -217,7 +217,10 @@ export default {
         page: '',
         filter: 'all',
         sort: 'relative',
-        author_id: ''
+        author_id: '',
+        author_fname: '',
+        author_name: '',
+        author_des: '',
       },
       settings: {
         strokeColor: '#29B5FF',
@@ -262,11 +265,15 @@ export default {
       window.open('https://www.ncbi.nlm.nih.gov/pubmed/' + id)
     },
     search_click () {
-      this.result = {}
       this.request.filter = 'all'
       this.request.sort = 'relative'
       this.request.method = 'search'
+      this.request.author_id = ''
+      this.request.author_name = ''
+      this.request.author_fname = ''
+      this.request.author_des = ''
       this.isCustom = false
+      this.result = {}
       this.search()
     },
     search_recent () {
@@ -284,13 +291,26 @@ export default {
       this.search()
     },
     search_author_id (index) {
-      this.result = {}
       this.request.author_id = this.result.duplicate[index].author_id
+      this.request.author_name = this.result.duplicate[index].author_name
+      this.request.author_fname = this.result.duplicate[index].author_fname
+      this.request.author_des = this.result.duplicate[index].des
       if (this.request.term !== '') {
         this.request.method = 'search_author_id_term'
       } else {
         this.request.method = 'search_author_id'
       }
+      this.result = {}
+      this.search()
+    },
+    search_rank (index) {
+      this.request.author_id = this.result.rank[index].author_id
+      this.request.author_name = this.result.rank[index].name
+      this.request.author_fname = this.result.rank[index].author_fname
+      this.request.author_des = this.result.rank[index].author_des
+      this.$refs.author_input.value = this.result.rank[index].name
+      this.request.method = 'search_author_id_term'
+      this.result = {}
       this.search()
     },
     show () {
@@ -310,14 +330,14 @@ export default {
       this.search_filter(filter)
     },
     showrelation () {
-      // if (this.result.bar) {
-      //   this.showSvg()
-      //   return true
-      // } else {
-      //   return false
-      // }
-      this.showSvg()
-      return true
+       if (this.result.bar) {
+         this.showSvg()
+         return true
+       } else {
+         return false
+       }
+//      this.showSvg()
+//      return true
     },
     showSvg () {
       var that = this
@@ -690,22 +710,25 @@ export default {
     box-shadow: 5px 4px 11px 0px rgba(136, 136, 136, 0.61);
     margin: 30px 15%;
     cursor:pointer;
+    padding: 10px;
+    background: #fff;
   }
   .dup_title {
+    width: 100%;
     font-size: 33px;
-    color: black;
+    color: #337ab7;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
   }
   .name {
-    font-size: 17px;
+    font-size: 18px;
     color: black;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
   }
   .des {
-    font-size: 14px;
-    color: black;
+    font-size: 15px;
+    color: dimgrey;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
   }
@@ -769,6 +792,7 @@ export default {
   }
   .visual {
     height: 450px;
+    width: 100%;
   }
   .rank_title {
     font-size: 1.5em;
