@@ -189,8 +189,8 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://localhost/test/Computing_project/search.php',
-//      api:'http://43.240.98.137/test2.php',
+      api: 'http://43.240.98.137/test2.php',
+      //      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
         term: '',
@@ -201,7 +201,7 @@ export default {
         author_id: '',
         author_fname: '',
         author_name: '',
-        author_des: '',
+        author_des: ''
       },
       settings: {
         strokeColor: '#29B5FF',
@@ -236,7 +236,7 @@ export default {
             this.result = response.data
             this.rank_max = this.result.rank_max
             this.loading = false
-            if(this.result.author){
+            if (this.result.author) {
               this.request.author_id = this.result.author.author_id
               this.request.author_name = this.result.author.author_name
               this.request.author_fname = this.result.author.author_fname
@@ -273,7 +273,7 @@ export default {
       this.request.filter = filter
       if (this.request.term !== '' && this.request.author_search !== '') {
         this.request.method = 'search_author_id_term'
-      } else if(this.request.term === ''){
+      } else if (this.request.term === '') {
         this.request.method = 'search_author_id'
       } else {
         this.request.method = 'search'
@@ -285,7 +285,7 @@ export default {
       this.request.sort = sort
       if (this.request.term !== '' && this.request.author_search !== '') {
         this.request.method = 'search_author_id_term'
-      } else if(this.request.term === ''){
+      } else if (this.request.term === '') {
         this.request.method = 'search_author_id'
       } else {
         this.request.method = 'search'
@@ -328,22 +328,19 @@ export default {
         return true
       }
     },
-    search_relation (author_id,author_name,author_fname,author_des) {
-      this.request.author_id = author_id
-      this.request.author_name = author_name
-      this.request.author_fname = author_fname
-      this.request.author_des = author_des
+    search_relation (authorId, authorName, authorFname, authorDes) {
+      this.request.authorId = authorId
+      this.request.authorName = authorName
+      this.request.authorFname = authorFname
+      this.request.authorDes = authorDes
       this.request.method = 'search_author_id'
-      this.$refs.author_input.value = author_name
+      this.$refs.author_input.value = authorName
       this.$refs.term_input.value = ''
       this.result = {}
       this.search()
     },
     clickFunc () {
       this.isCustom = true
-    },
-    clickFunc () {
-      this.isFilter = true
     },
     search_filter_custom () {
       var start = this.$refs.startTime.value
@@ -352,15 +349,15 @@ export default {
       this.search_filter(filter)
     },
     showrelation () {
-       if (this.result.relation) {
-         d3.select('.test').remove()
-         this.nodes = this.result.relation.nodes
-         this.links = this.result.relation.links
-         this.showSvg()
-         return true
-       } else {
-         return false
-       }
+      if (this.result.relation) {
+        d3.select('.test').remove()
+        this.nodes = this.result.relation.nodes
+        this.links = this.result.relation.links
+        this.showSvg()
+        return true
+      } else {
+        return false
+      }
     },
     showSvg () {
       var that = this
@@ -369,9 +366,8 @@ export default {
         .attr('class', 'test')
         .attr('width', that.settings.svgWigth)
         .attr('height', that.settings.svgHeight)
-        .call(d3.zoom().scaleExtent([1,10]).on('zoom',function () {
-          svg.attr("transform", d3.event.transform)
-
+        .call(d3.zoom().scaleExtent([1, 10]).on('zoom', function () {
+          svg.attr('transform', d3.event.transform)
         }))
       var simulation = d3.forceSimulation(that.nodes)
         .force('link', d3.forceLink(that.links).distance(100).strength(0.1))
