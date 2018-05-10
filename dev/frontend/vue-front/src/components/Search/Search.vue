@@ -92,8 +92,10 @@
           <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}" @click="search_rank(index)"></div>
         </div>
       </div>
+      <div class="relation" v-if="showrelation()">
+        <p class="relation_title">Author Relationship</p>
+      </div>
     </div>
-    <!--<div class="relation" v-if="showrelation()"></div>-->
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
     <div style="height:10px;width:100%;"></div>
@@ -170,45 +172,8 @@ export default {
   },
   data () {
     return {
-      nodes: [
-        {
-          name: 'Alice',
-          id: 2407,
-          color: '#D24D25'
-        },
-        {
-          name: 'Bob',
-          id: 2247,
-          color: '#FFCD34'
-        },
-        {
-          name: 'Carol',
-          id: 4567,
-          color: '#FFCD34'
-        },
-        {
-          name: 'Dog',
-          id: 5678,
-          color: '#FFCD34'
-        }
-      ],
-      links: [
-        {
-          source: 0,
-          target: 1,
-          value: 2
-        },
-        {
-          source: 0,
-          target: 2,
-          value: 3
-        },
-        {
-          source: 0,
-          target: 3,
-          value: 4
-        }
-      ],
+      nodes: null,
+      links: null,
       api: 'http://localhost/test/Computing_project/search.php',
       request: {
         method: '',
@@ -330,14 +295,14 @@ export default {
       this.search_filter(filter)
     },
     showrelation () {
-       if (this.result.bar) {
+       if (this.result.relation) {
+         this.nodes = this.result.relation.nodes
+         this.links = this.result.relation.links
          this.showSvg()
          return true
        } else {
          return false
        }
-//      this.showSvg()
-//      return true
     },
     showSvg () {
       var that = this
@@ -832,5 +797,14 @@ export default {
     margin-top: 200px;
     margin-left: 43%;
     margin-right: 8%;
+  }
+  .relation {
+    padding: 20px;
+  }
+  .relation_title {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: "Times New Roman", Times, serif;
+    color: #337ab7 ;
   }
 </style>
