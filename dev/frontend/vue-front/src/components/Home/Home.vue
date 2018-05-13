@@ -4,8 +4,13 @@
   <h1>Spinal Cord Injury Search Hub</h1>
     <!--       search form -->
     <form id="search" class="search" action="">
-      <button type="submit" v-on:click= "show">
+      <button type="submit" class="button" v-on:click= "show">
         Let's Search
+      </button>
+    </form>
+    <form class="visual" action="">
+      <button type="submit" class="button" v-on:click= "see">
+        Visualize All
       </button>
     </form>
   </div>
@@ -23,6 +28,9 @@ export default {
   methods: {
     show: function () {
       window.open('http://localhost:8080/?#/search')
+    },
+    see: function () {
+      window.open('http://localhost:8080/?#/profile')
     }
   }
 }
@@ -85,9 +93,9 @@ export default {
     height: 40px;
     position:relative;
     margin: 1px auto;
-    margin-top: 161px; }
+    margin-top: 108px; }
 
-  .search button {
+  .button {
     position: relative;
     margin-top: 10px;
     border: 0;
@@ -102,11 +110,18 @@ export default {
     border: 2.5px solid rgb(249,249,249);
     border-radius: 3px;}
 
-  .search button:hover {
+  .button:hover {
     background: #fff;
     color:#444;}
-  .search button:active {
+  .button:active {
     box-shadow: 0px 0px 12px 0px rgba(225, 225, 225, 1);}
 
-  .search button:focus {outline: 0;}
+  .button:focus {outline: 0;}
+
+  .visual {
+    width: 700px;
+    height: 40px;
+    position:relative;
+    margin: 1px auto;
+    margin-top: 30px; }
 </style>
