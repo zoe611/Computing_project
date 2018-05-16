@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
 import Vs from 'd3-vs'
+import legend from 'd3-svg-legend'
 
 Vue.use(Vs)
 Vue.use(VueResource)

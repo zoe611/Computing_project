@@ -3,7 +3,7 @@
     <div class="topic">
       <p class="topic_title">Visualize for All Topics</p>
     </div>
-    <svg width="80%" height="700" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
+    <svg width="100%" height="700" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
   </div>
 </template>
 
@@ -50,8 +50,139 @@ export default {
           value: 30,
           desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
                     '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
+        },
+        {
+          cat: 'library',
+          name: 'D3',
+          value: 30,
+          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
+              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
+              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
+              '\t\t\t\tThis infographic you are viewing is made with D3.'
+        }, {
+          cat: 'library',
+          name: 'Raphaël',
+          value: 10,
+          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
+              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
+
+        }, {
+          cat: 'library',
+          name: 'Relay',
+          value: 70,
+          desc: 'A JavaScript framework for building data-driven React applications.\n' +
+              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
+              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
+              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
+        }, {
+          cat: 'library',
+          name: 'Three.js',
+          value: 40,
+          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
+              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
+              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
+        }, {
+          cat: 'library sub',
+          name: 'Lodash',
+          value: 30,
+          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
+              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
+        },
+        {
+          cat: 'library',
+          name: 'D3',
+          value: 30,
+          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
+              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
+              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
+              '\t\t\t\tThis infographic you are viewing is made with D3.'
+        }, {
+          cat: 'library',
+          name: 'Raphaël',
+          value: 10,
+          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
+              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
+
+        }, {
+          cat: 'library',
+          name: 'Relay',
+          value: 70,
+          desc: 'A JavaScript framework for building data-driven React applications.\n' +
+              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
+              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
+              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
+        }, {
+          cat: 'library',
+          name: 'Three.js',
+          value: 40,
+          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
+              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
+              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
+        }, {
+          cat: 'library sub',
+          name: 'Lodash',
+          value: 30,
+          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
+              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
+        },
+        {
+          cat: 'library',
+          name: 'D3',
+          value: 30,
+          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
+              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
+              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
+              '\t\t\t\tThis infographic you are viewing is made with D3.'
+        }, {
+          cat: 'library',
+          name: 'Raphaël',
+          value: 100,
+          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
+              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
+
+        }, {
+          cat: 'library',
+          name: 'Relay',
+          value: 70,
+          desc: 'A JavaScript framework for building data-driven React applications.\n' +
+              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
+              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
+              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
+        }, {
+          cat: 'library',
+          name: 'Three.js',
+          value: 40,
+          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
+              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
+              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
+        }, {
+          cat: 'library sub',
+          name: 'Lodash',
+          value: 30,
+          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
+              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
         }
-      ]
+      ],
+      color: {0: '#E4523B',
+        1: '#0A454D',
+        2: '#3DB296',
+        3: '#ECC417',
+        4: '#E8931E',
+        5: '#E97778',
+        6: '#7998C9',
+        7: '#FFD57E',
+        8: '#89C7B6',
+        9: '#AD84C7',
+        10: '#375A28',
+        11: '#0093C6',
+        12: '#192C47',
+        13: '#7F4354',
+        14: '#FF88A8',
+        15: '#BBB06E',
+        16: '#7B683D',
+        17: '#CC2F5A',
+        18: '#FF3B70',
+        19: '#7F1D38'}
       /* settings: {
         strokeColor: '#29B5FF',
         width: 100,
@@ -95,18 +226,11 @@ export default {
       // .force('center', d3.forceCenter(centerX, centerY))
         .force('x', d3.forceX(centerX).strength(strength))
         .force('y', d3.forceY(centerY).strength(strength))
-      // reduce number of circles on mobile screen due to slow computation
-      if ('matchMedia' in window && window.matchMedia('(max-device-width: 767px)').matches) {
-        data = data.filter(el => {
-          return el.value >= 50
-                })
-      }
       var root = d3.hierarchy({children: that.data})
         .sum(d => d.value)
       // we use pack() to automatically calculate radius conveniently only
       // and get only the leaves
       var nodes = pack(root).leaves().map(node => {
-        console.log('node:', node.x, (node.x - centerX) * 2)
         const data = node.data
         return {
           x: centerX + (node.x - centerX) * 3, // magnify start position to have transition to center movement
@@ -121,7 +245,7 @@ export default {
         }
       })
       simulation.nodes(nodes).on('tick', ticked)
-      svg.style('background-color', '#eee')
+      svg.style('background-color', '#fff')
       var node = svg.selectAll('.node')
         .data(nodes)
         .enter().append('g')
@@ -144,7 +268,9 @@ export default {
       node.append('circle')
         .attr('id', d => d.id)
         .attr('r', 0)
-        .style('fill', 'red')
+        .style('fill', function (d) {
+          return that.color[d.index]
+        })
         .transition().duration(2000).ease(d3.easeElasticOut)
         .tween('circleIn', (d) => {
           let i = d3.interpolateNumber(0, d.radius)
@@ -159,53 +285,19 @@ export default {
         .attr('xlink:href', d => `#${d.id}`)
       // display text as circle icon
       node.append('text')
+        .classed('node-icon', true)
         .attr('clip-path', d => `url(#clip-${d.id})`)
-        .selectAll('tspan')
-        .enter()
-        .append('tspan')
-        .attr('x', 0)
-        .attr('y', (d, i, nodes) => (13 + (i - nodes.length / 2 - 0.5) * 10))
-        .text(name => name)
-      /* display image as circle icon
-      node.append('image')
-        .attr('clip-path', d => `url(#clip-${d.id})`)
-        .attr('x', d => -d.radius * 0.7)
-        .attr('y', d => -d.radius * 0.7)
-        .attr('height', d => d.radius * 2 * 0.7)
-        .attr('width', d => d.radius * 2 * 0.7) */
+        .text(function (d) {
+          return d.name
+        })
+        .style('stroke', '#fff')
+        .style('font-size', '20px')
+        .style('fill', '#fff')
       node.append('title')
-        .text(d => (d.cat + '::' + d.name + '\n' + format(d.value)))
-      var legendOrdinal = d3.legendColor()
-        .scale('red')
-        .shape('circle')
-      var legend = svg.append('g')
-        .classed('legend-color', true)
-        .attr('text-anchor', 'start')
-        .attr('transform', 'translate(20,30)')
-        .style('font-size', '12px')
-        .call(legendOrdinal)
-      var sizeScale = d3.scaleOrdinal()
-        .domain(['less use', 'more use'])
-        .range([5, 10])
-      var legendSize = d3.legendSize()
-        .scale(sizeScale)
-        .shape('circle')
-        .shapePadding(10)
-        .labelAlign('end')
-      var legend2 = svg.append('g')
-        .classed('legend-size', true)
-        .attr('text-anchor', 'start')
-        .attr('transform', 'translate(150, 25)')
-        .style('font-size', '12px')
-        .call(legendSize)
-      /*
-        <foreignObject class="circle-overlay" x="10" y="10" width="100" height="150">
-            <div class="circle-overlay__inner">
-                <h2 class="circle-overlay__title">ReactJS</h2>
-                <p class="circle-overlay__body">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ullam, sunt, aspernatur. Autem repudiandae, laboriosam. Nulla quidem nihil aperiam dolorem repellendus pariatur, quaerat sed eligendi inventore ipsa natus fugiat soluta doloremque!</p>
-            </div>
-        </foreignObject>
-        */
+        .text(function (d) {
+          return d.name
+        })
+        .style('stroke', '#fff')
       var infoBox = node.append('foreignObject')
         .classed('circle-overlay hidden', true)
         .attr('x', -350 * 0.5 * 0.8)
@@ -217,9 +309,11 @@ export default {
       infoBox.append('h2')
         .classed('circle-overlay__title', true)
         .text(d => d.name)
+        .style('color', '#fff')
       infoBox.append('p')
         .classed('circle-overlay__body', true)
         .html(d => d.desc)
+        .style('color', '#fff')
       node.on('click', (currentNode) => {
         d3.event.stopPropagation()
         console.log('currentNode', currentNode)
@@ -233,6 +327,7 @@ export default {
         simulation.alphaTarget(0.2).restart()
         // hide all circle-overlay
         d3.selectAll('.circle-overlay').classed('hidden', true)
+        d3.selectAll('.node-icon').classed('node-icon--faded', false).style('opacity', '1')
         // don't fix last node to center anymore
         if (lastNode) {
           lastNode.fx = null
@@ -269,6 +364,8 @@ export default {
             let $currentGroup = d3.select(currentTarget)
             $currentGroup.select('.circle-overlay')
               .classed('hidden', false)
+            $currentGroup.select('.node-icon')
+              .classed('node-icon--faded', true).style('opacity', '0')
           })
           .on('interrupt', () => {
             console.log('move interrupt', currentNode)
@@ -303,6 +400,7 @@ export default {
             })
           // hide all circle-overlay
           d3.selectAll('.circle-overlay').classed('hidden', true)
+          d3.selectAll('.node-icon').classed('node-icon--faded', false).style('opacity', '1')
         }
       })
 
@@ -323,5 +421,34 @@ export default {
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
     color: #337ab7 ;
+  }
+  h1 {
+    text-align: center;
+  }
+  svg {
+    margin:auto;
+    display:block;
+  }
+  .circle-overlay {
+    font-size: 16px;
+    border-radius: 50%;
+    position: absolute;
+    overflow: hidden;
+    /*it's buggy with the foreignObject background right now*/
+    /*background-color: rgba(255,255,255,0.5);*/
+  }
+  .circle-overlay__inner {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+  }
+  .hidden {
+    display: none;
+  }
+  .node-icon node-icon--faded {
+    opacity: 0;
+  }
+  .legend-size circle {
+    fill: rgb(31, 119, 180);
   }
 </style>
