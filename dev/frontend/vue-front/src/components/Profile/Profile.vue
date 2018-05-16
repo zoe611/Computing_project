@@ -65,10 +65,16 @@ export default {
       circle: null */
     }
   },
+  mounted: function () {
+    this.showSvg()
+  },
   methods: {
     showSvg () {
+      var that = this
       var svg = d3.select('svg')
+      console.log(svg)
       var width = document.body.clientWidth // get width in pixels
+      console.log(width)
       var height = +svg.attr('height')
       var centerX = width * 0.5
       var centerY = height * 0.5
@@ -90,12 +96,12 @@ export default {
         .force('x', d3.forceX(centerX).strength(strength))
         .force('y', d3.forceY(centerY).strength(strength))
       // reduce number of circles on mobile screen due to slow computation
-      /* if ('matchMedia' in window && window.matchMedia('(max-device-width: 767px)').matches) {
+      if ('matchMedia' in window && window.matchMedia('(max-device-width: 767px)').matches) {
         data = data.filter(el => {
           return el.value >= 50
-        })
-      } */
-      var root = d3.hierarchy({children: this.data})
+                })
+      }
+      var root = d3.hierarchy({children: that.data})
         .sum(d => d.value)
       // we use pack() to automatically calculate radius conveniently only
       // and get only the leaves
