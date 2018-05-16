@@ -5,8 +5,10 @@ import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
 import Vs from 'd3-vs'
-import legend from 'd3-svg-legend'
+import Element from 'element-ui'
+import 'element-theme-default'
 
+Vue.use(Element)
 Vue.use(Vs)
 Vue.use(VueResource)
 

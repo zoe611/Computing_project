@@ -3,6 +3,14 @@
     <div class="topic">
       <p class="topic_title">Visualize for All Topics</p>
     </div>
+    <el-select v-model="value" placeholder="Choose Year" @change="changeBubble()">
+      <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+      </el-option>
+    </el-select>
     <svg width="100%" height="700" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
   </div>
 </template>
@@ -13,6 +21,58 @@ export default {
   name: 'Home',
   data () {
     return {
+      filter: '',
+      sort: '',
+      options: [{
+        value: '0',
+        label: 'all'
+      }, {
+        value: '1',
+        label: '2018'
+      }, {
+        value: '2',
+        label: '2017'
+      }, {
+        value: '3',
+        label: '2016'
+      }, {
+        value: '4',
+        label: '2015'
+      }, {
+        value: '5',
+        label: '2014'
+      }, {
+        value: '6',
+        label: '2013'
+      }, {
+        value: '7',
+        label: '2012'
+      }, {
+        value: '8',
+        label: '2011'
+      }, {
+        value: '9',
+        label: '2010'
+      }, {
+        value: '10',
+        label: '2009'
+      }, {
+        value: '11',
+        label: '2008'
+      }, {
+        value: '12',
+        label: '2007'
+      }, {
+        value: '13',
+        label: '2006'
+      }, {
+        value: '14',
+        label: '2005'
+      }, {
+        value: '15',
+        label: '2004'
+      }],
+      value: '',
       data: [
         {
           cat: 'library',
@@ -182,24 +242,30 @@ export default {
         16: '#7B683D',
         17: '#CC2F5A',
         18: '#FF3B70',
-        19: '#7F1D38'}
-      /* settings: {
-        strokeColor: '#29B5FF',
-        width: 100,
-        svgWigth: 960,
-        svgHeight: 600
-      },
-      msg: 'Welcome to Your Vue.js App',
-      svg: null,
-      graph: null,
-      simulation: null,
-      circle: null */
+        19: '#7F1D38'},
+      result: null,
+      api: 'http://43.240.98.137/test2.php',
+      request: {
+        method: 'visual'
+      }
     }
   },
   mounted: function () {
-    this.showSvg()
+    this.$http.post(this.api, this.request)
+            .then((response) => {
+      console.log(response)
+      this.result = response.data
+      this.data = this.result.all
+      this.showSvg()
+  })
   },
   methods: {
+    changeBubble (year) {
+      console.log(this.value)
+      var filter = this.value
+      this.data = this.result[filter]
+      d3.selectAll('g').remove()
+    },
     showSvg () {
       var that = this
       var svg = d3.select('svg')
