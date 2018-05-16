@@ -123,8 +123,8 @@
         <h3 :class="request.sort === 'relative' ? 'active_filter': 'filter'" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 :class="request.sort === 'sort_pubdate' ? 'active_filter': 'filter'" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
-      <div class="filter_term" v-if="this.request.author_id && this.$refs.author_input.value.length == 0">
-        <h3 class="filter">Filter by keywords</h3>
+      <div class="filter_term" v-if="this.request.author_id && this.request.method != 'search_author_id_term'">
+        <h3 class="filter_custom">Filter by keywords</h3>
         <div class="customTime">
           <input type="search" class = "custom_filter" placeholder="keyword" ref="keyword" maxlength="84" required>
           <button type="submit" class="click" v-on:click="search_filter_term()">
@@ -332,10 +332,10 @@ export default {
       }
     },
     search_relation (authorId, authorName, authorFname, authorDes) {
-      this.request.authorId = authorId
-      this.request.authorName = authorName
-      this.request.authorFname = authorFname
-      this.request.authorDes = authorDes
+      this.request.author_id = authorId
+      this.request.author_name = authorName
+      this.request.author_fname = authorFname
+      this.request.author_des = authorDes
       this.request.method = 'search_author_id'
       this.$refs.author_input.value = authorName
       this.$refs.term_input.value = ''
@@ -545,9 +545,21 @@ export default {
   .filter_sort {
     height: 30px;
   }
+  .filter_custom {
+    width: 150px;
+    height: 10px;
+    display: vertical-align;
+    margin-top: 30px;
+    text-align: left;
+    cursor:pointer;
+    font-size: 1.2em;
+    font-family: Times, TimesNR, 'New Century Schoolbook', Georgia, 'New York', serif;
+  }
   .custom_filter {
     margin-left: 5px;
-    margin-top: 5px;
+    margin-top: 10px;
+    width: 100px;
+    float:left;
   }
   .active_filter {
     width: 150px;
