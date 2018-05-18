@@ -128,7 +128,6 @@ export default {
       var strength = 0.05
       var focusedNode
       var format = d3.format(',d')
-      // let scaleColor = d3.scaleOrdinal(d3.schemeCategory20)
       // use pack to calculate radius of the circle
       var pack = d3.pack()
         .size([width, height])
@@ -207,7 +206,15 @@ export default {
           return d.name
         })
         .style('stroke', '#fff')
-        .style('font-size', '20px')
+        .style('font-size', function (d) {
+          console.log(d.radius)
+          console.log(d.name)
+          if (d.radius > 50) {
+            return '2em'
+          } else {
+            return '1em'
+          }
+        })
         .style('fill', '#fff')
       node.append('title')
         .text(function (d) {
