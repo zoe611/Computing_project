@@ -1,9 +1,9 @@
 <template>
   <div class="home">
-    <div class="topic">
-      <p class="topic_title">Visualize for All Topics</p>
+    <div class="header">
+      <h1>Spinal Cord Injury Search Hub</h1>
     </div>
-    <el-select v-model="value" placeholder="Choose Year" @change="changeBubble()">
+    <el-select class="year" v-model="value" placeholder="Choose Year" @change="changeBubble()">
       <el-option
               v-for="item in options"
               :key="item.value"
@@ -252,12 +252,12 @@ export default {
   },
   mounted: function () {
     this.$http.post(this.api, this.request)
-            .then((response) => {
-      console.log(response)
-      this.result = response.data
-      this.data = this.result.all
-      this.showSvg()
-  })
+      .then((response) => {
+        console.log(response)
+        this.result = response.data
+        this.data = this.result.all
+        this.showSvg()
+      })
   },
   methods: {
     changeBubble (year) {
@@ -482,6 +482,54 @@ export default {
 </script>
 
 <style scoped>
+  .header {
+    margin-top:0;
+    width:100%;
+    height:180px;
+    background-image:url("../../assets/searchnew.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    box-shadow: 0 2px 2px rgba(0,0,1,0.4);
+  }
+  h1{
+    font-size: 4.5rem;
+    font-weight: 900;
+    text-align: center;
+    margin: 0;
+    text-transform: uppercase;
+    padding-top: 5%;
+    animation: background-move 10s infinite;
+    background: url("../../assets/images-13.jpeg");
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  @keyframes background-move {
+    0% {
+      background-position: 0% 0%;
+    }
+
+    25% {
+      background-position: 5% 10%;
+    }
+
+    50% {
+      background-position: 15% 15%;
+    }
+
+    75% {
+      background-position: 10% 5%;
+    }
+
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v7/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
+  }
   .topic_title {
     font-size: 1.5em;
     font-weight: bold;
@@ -516,5 +564,10 @@ export default {
   }
   .legend-size circle {
     fill: rgb(31, 119, 180);
+  }
+  .year {
+    float:right;
+    margin-top: 2%;
+    margin-right: 2%;
   }
 </style>
