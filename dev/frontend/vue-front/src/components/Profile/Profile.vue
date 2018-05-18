@@ -11,7 +11,7 @@
               :value="item.value">
       </el-option>
     </el-select>
-    <svg width="100%" height="700" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
+    <svg width="100%" height="1000" font-family="sans-serif" font-size="10" text-anchor="middle"></svg>
   </div>
 </template>
 
@@ -24,205 +24,55 @@ export default {
       filter: '',
       sort: '',
       options: [{
-        value: '0',
+        value: 'all',
         label: 'all'
       }, {
-        value: '1',
+        value: '2018',
         label: '2018'
       }, {
-        value: '2',
+        value: '2017',
         label: '2017'
       }, {
-        value: '3',
+        value: '2016',
         label: '2016'
       }, {
-        value: '4',
+        value: '2015',
         label: '2015'
       }, {
-        value: '5',
+        value: '2014',
         label: '2014'
       }, {
-        value: '6',
+        value: '2013',
         label: '2013'
       }, {
-        value: '7',
+        value: '2012',
         label: '2012'
       }, {
-        value: '8',
+        value: '2011',
         label: '2011'
       }, {
-        value: '9',
+        value: '2010',
         label: '2010'
       }, {
-        value: '10',
+        value: '2009',
         label: '2009'
       }, {
-        value: '11',
+        value: '2008',
         label: '2008'
       }, {
-        value: '12',
+        value: '2007',
         label: '2007'
       }, {
-        value: '13',
+        value: '2006',
         label: '2006'
       }, {
-        value: '14',
+        value: '2005',
         label: '2005'
       }, {
-        value: '15',
+        value: '2004',
         label: '2004'
       }],
       value: '',
-      data: [
-        {
-          cat: 'library',
-          name: 'D3',
-          value: 30,
-          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
-                    '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
-                    '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
-                    '\t\t\t\tThis infographic you are viewing is made with D3.'
-        }, {
-          cat: 'library',
-          name: 'Raphaël',
-          value: 10,
-          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
-                    '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
-
-        }, {
-          cat: 'library',
-          name: 'Relay',
-          value: 70,
-          desc: 'A JavaScript framework for building data-driven React applications.\n' +
-                    '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
-                    '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
-                    '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
-        }, {
-          cat: 'library',
-          name: 'Three.js',
-          value: 40,
-          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
-                    '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
-                    '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
-        }, {
-          cat: 'library sub',
-          name: 'Lodash',
-          value: 30,
-          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
-                    '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
-        },
-        {
-          cat: 'library',
-          name: 'D3',
-          value: 30,
-          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
-              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
-              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
-              '\t\t\t\tThis infographic you are viewing is made with D3.'
-        }, {
-          cat: 'library',
-          name: 'Raphaël',
-          value: 10,
-          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
-              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
-
-        }, {
-          cat: 'library',
-          name: 'Relay',
-          value: 70,
-          desc: 'A JavaScript framework for building data-driven React applications.\n' +
-              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
-              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
-              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
-        }, {
-          cat: 'library',
-          name: 'Three.js',
-          value: 40,
-          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
-              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
-              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
-        }, {
-          cat: 'library sub',
-          name: 'Lodash',
-          value: 30,
-          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
-              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
-        },
-        {
-          cat: 'library',
-          name: 'D3',
-          value: 30,
-          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
-              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
-              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
-              '\t\t\t\tThis infographic you are viewing is made with D3.'
-        }, {
-          cat: 'library',
-          name: 'Raphaël',
-          value: 10,
-          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
-              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
-
-        }, {
-          cat: 'library',
-          name: 'Relay',
-          value: 70,
-          desc: 'A JavaScript framework for building data-driven React applications.\n' +
-              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
-              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
-              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
-        }, {
-          cat: 'library',
-          name: 'Three.js',
-          value: 40,
-          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
-              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
-              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
-        }, {
-          cat: 'library sub',
-          name: 'Lodash',
-          value: 30,
-          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
-              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
-        },
-        {
-          cat: 'library',
-          name: 'D3',
-          value: 30,
-          desc: 'D3.js (or just D3 for Data-Driven Documents) is a JavaScript library for\n' +
-              '\t\t\t\tproducing dynamic, interactive data visualizations in web browsers.\n' +
-              '\t\t\t\tIt makes use of the widely implemented SVG, HTML5, and CSS standards.<br>\n' +
-              '\t\t\t\tThis infographic you are viewing is made with D3.'
-        }, {
-          cat: 'library',
-          name: 'Raphaël',
-          value: 100,
-          desc: 'aphaël is a cross-browser JavaScript library that draws Vector graphics for web sites.\n' +
-              '\t\t\t\tIt will use SVG for most browsers, but will use VML for older versions of Internet Explorer'
-
-        }, {
-          cat: 'library',
-          name: 'Relay',
-          value: 70,
-          desc: 'A JavaScript framework for building data-driven React applications.\n' +
-              '\t\t\t\tIt uses GraphQL as the query language to exchange data between app and server efficiently.\n' +
-              '\t\t\t\tQueries live next to the views that rely on them, so you can easily reason\n' +
-              '\t\t\t\tabout your app. Relay aggregates queries into efficient network requests to fetch only what you need.'
-        }, {
-          cat: 'library',
-          name: 'Three.js',
-          value: 40,
-          desc: 'Three.js allows the creation of GPU-accelerated 3D animations using\n' +
-              '\t\t\t\tthe JavaScript language as part of a website without relying on\n' +
-              '\t\t\t\tproprietary browser plugins. This is possible thanks to the advent of WebGL.'
-        }, {
-          cat: 'library sub',
-          name: 'Lodash',
-          value: 30,
-          desc: 'Lodash is a JavaScript library which provides <strong>utility functions</strong> for\n' +
-              '\t\t\t\tcommon programming tasks using the functional programming paradigm.'
-        }
-      ],
       color: {0: '#E4523B',
         1: '#0A454D',
         2: '#3DB296',
@@ -244,7 +94,7 @@ export default {
         18: '#FF3B70',
         19: '#7F1D38'},
       result: null,
-      api: 'http://43.240.98.137/test2.php',
+      api: 'http://43.240.98.137/test3.php',
       request: {
         method: 'visual'
       }
@@ -260,18 +110,18 @@ export default {
       })
   },
   methods: {
-    changeBubble (year) {
+    changeBubble () {
       console.log(this.value)
       var filter = this.value
       this.data = this.result[filter]
       d3.selectAll('g').remove()
+      this.showSvg()
     },
     showSvg () {
       var that = this
       var svg = d3.select('svg')
       console.log(svg)
       var width = document.body.clientWidth // get width in pixels
-      console.log(width)
       var height = +svg.attr('height')
       var centerX = width * 0.5
       var centerY = height * 0.5
@@ -380,6 +230,7 @@ export default {
         .classed('circle-overlay__body', true)
         .html(d => d.desc)
         .style('color', '#fff')
+        .style('font-size', '3.3em')
       node.on('click', (currentNode) => {
         d3.event.stopPropagation()
         console.log('currentNode', currentNode)
