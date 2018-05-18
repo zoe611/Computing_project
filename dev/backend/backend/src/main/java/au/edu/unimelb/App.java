@@ -58,14 +58,108 @@ public class App {
 	String AUTHORS_TABLE = "author";
 	String AUTHOR_ARTICLE_TABLE = "authors_articles";
 	String NO_AUTHOR_DES = "no description about the author";
+	String VISUAL_TABLE = "visual"; 
 
 	public static void main(String[] args) {
 		App app = new App();
-		app.run();
+		app.updateVisual();
+	}
+	
+	private int selectVisual(String query) {
+		int num = 0;
+		try {
+			SqlConnection connection = new SqlConnection();
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			ResultSet resultSet = command.executeSelect();
+			while(resultSet.next()) {
+				num = resultSet.getInt("num");
+			}
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return num;
+	}
+	
+	private void updateVisual() {
+		Calendar cal=Calendar.getInstance();
+		String pathname = "src/main/resources/visualterms.txt";
+		try {
+			List<String> list_year = new ArrayList<String>();
+			String table_list_name = " (`term`, `all_year`";
+			int startyear = 2004;
+			int endyear = cal.get(Calendar.YEAR); 
+			for(int i = startyear;i <= endyear ; i++) {
+				table_list_name = table_list_name + " , `" + i + "` ";
+				list_year.add(Integer.toString(i));
+			}
+			table_list_name = table_list_name + ")";
+			System.out.println(endyear);
+			int num;
+			List<String> visualTerms = readInputFile(pathname);
+			for (String term : visualTerms) {
+				int[] num_result = new int[16]; 
+				System.out.println(term);
+				String query = "SELECT COUNT(*) AS num FROM " + ARTICLES_TABLE + 
+						" WHERE MATCH (`article_title`,`abstract`,`keywords`) AGAINST ('" + 
+						term + "') ";
+				System.out.println(query);
+				num = selectVisual(query);
+				num_result[0] = num;
+				int count = 1; 
+				for(int i = startyear; i <= endyear ; i++) {
+					String new_query = query + "AND year = " + i;
+					System.out.println(new_query);
+					num = selectVisual(new_query);
+					num_result[count] = num;
+					count ++;
+				}
+				query = "INSERT INTO " + VISUAL_TABLE + table_list_name + 
+						"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				System.out.println(query);
+				SqlConnection connection = new SqlConnection();
+				SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+				command.addParameter(new SqlParameter("term",term, Types.VARCHAR));
+				command.addParameter(new SqlParameter("all_year",num_result[0], Types.INTEGER));
+				int i = 1; 
+				for (String para : list_year) {
+					command.addParameter(new SqlParameter(para,num_result[i], Types.INTEGER));
+					i ++;
+				}
+				int rowsEffected = command.execute();
+				System.out.println(rowsEffected + " rows inserted!");
+				connection.close();
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
 	}
 	
 	/**
-	 * UPDATE THE DATABASE
+	 * UPDATE THE DATABASE EVERY WEEK
+	 */
+	private void update() {
+		String pathname = "src/main/resources/searchterms.txt";
+		try {
+			List<String> searchTerms = readInputFile(pathname);
+			for (String term : searchTerms) {
+				List idList = search(term,"2004/01/01","2018/05/14");
+				storeToDB(idList, term);
+			}
+			System.out.println("table terms_idlist is updated.");
+			createTableArticle();
+			System.out.println("table aritcles is updated.");
+			updateArticleTable();
+			System.out.println("table aritcles is detail updated.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * GENERATE THE DATABASE
 	 */
 	private void run() {
 		String pathname = "src/main/resources/searchterms.txt";
@@ -74,7 +168,7 @@ public class App {
 //			// create the terms_idlist table
 //			List<String> searchTerms = readInputFile(pathname);
 //			for (String term : searchTerms) {
-//				List idList = search(term);
+//				List idList = search(term,"2004/01/01","2018/05/14");
 //				storeToDB(idList, term);
 //			}
 //			System.out.println("table terms_idlist is updated.");
@@ -99,11 +193,11 @@ public class App {
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	private List<String> search(String term) throws URISyntaxException, IOException {
+	private List<String> search(String term, String mindate, String maxdate) throws URISyntaxException, IOException {
 		List<String> idList = new ArrayList<String>();
-		String result = baseNet.httpGet(buildSearchRequestURI(term, 1, 1));
+		String result = baseNet.httpGet(buildSearchRequestURI(term, 1, 1, mindate, maxdate));
 		int hits = findTotalHits(result);
-		idList = getIdList(term, hits);
+		idList = getIdList(term, hits, mindate, maxdate);
 		return idList;
 	}
 
@@ -116,7 +210,7 @@ public class App {
 	 * @throws IOException
 	 * @throws URISyntaxException
 	 */
-	private List<String> getIdList(String term, int hits) throws IOException, URISyntaxException {
+	private List<String> getIdList(String term, int hits,String mindate, String maxdate) throws IOException, URISyntaxException {
 		List<String> idList = new ArrayList<String>();
 		/**
 		 * pagination uses retstart and retmax params
@@ -135,7 +229,7 @@ public class App {
 		int retmax = 1000;
 		int retstart = 1;
 		for (int i = 0; i < hits; i++) {
-			String result = baseNet.httpGet(buildSearchRequestURI(term, retstart, retmax));
+			String result = baseNet.httpGet(buildSearchRequestURI(term, retstart, retmax, mindate, maxdate));
 			JsonNode root = mapper.readValue(result, JsonNode.class);
 			JsonNode listNode = root.get("esearchresult").withArray("idlist");
 			List<String> list = mapper.convertValue(listNode, List.class);
@@ -188,12 +282,12 @@ public class App {
 	 * @return
 	 * @throws URISyntaxException
 	 */
-	private URI buildSearchRequestURI(String term, int retstart, int retmax) throws URISyntaxException {
+	private URI buildSearchRequestURI(String term, int retstart, int retmax, String mindate, String maxdate) throws URISyntaxException {
 		return new URIBuilder().setScheme("https").setHost("eutils.ncbi.nlm.nih.gov/entrez")
 				.setPath("/eutils/esearch.fcgi").setParameter("term", term).setParameter("db", "pubmed")
 				.setParameter("usehistory", "y").setParameter("retmode", "json").setParameter("datetype", "pdat")
 				// TODO: CHECK DATE
-				.setParameter("mindate", "2004/01/01").setParameter("maxdate", "2020/01/25")
+				.setParameter("mindate", mindate).setParameter("maxdate", maxdate)
 				.setParameter("retmax", Integer.toString(retmax)).setParameter("retstart", Integer.toString(retstart))
 				.setParameter("email", "junwenz@unimelb.edu.au").setParameter("tool", "SRI_metadata_extraction")
 				.build();
@@ -457,6 +551,7 @@ public class App {
 			command.addParameter(param_author);
 			command.addParameter(param_orcid);
 			int rows = command.execute();
+		    connection.close();
 			System.out.println(rows + " rows inserted.");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -496,6 +591,7 @@ public class App {
 			command.addParameter(param_author);
 			command.addParameter(param_article);
 			int rows = command.execute();
+			connection.close();
 			System.out.println(rows + " rows inserted.");
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -514,6 +610,7 @@ public class App {
 			while (resultSet.next()) {
 				author_id = resultSet.getInt("id");
 			}
+			connection.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -535,6 +632,7 @@ public class App {
 			command.addParameter(param_des);
 			int rows = command.execute();
 			System.out.println(rows + "rows inserted.");
+			connection.close();
 			author_id = getAuthorId(author_fname, des);
 		} catch (SQLException e) {
 			e.printStackTrace();
