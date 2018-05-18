@@ -84,10 +84,6 @@ public class App {
 	private void updateVisual() {
 		Calendar cal=Calendar.getInstance();
 		String pathname = "src/main/resources/visualterms.txt";
-		String [] terms = {"rehabilitation","regeneration","paraplegia","trauma","chronic","demographics"
-				,"pain","tetraplegia","stroke","acute care","depression","health education","pressure sores"
-				,"autonomic dysreflexia","respiratory complications","bladder management","diabetes",
-				"independence","hypotension/hypertension","heart attack"}; 
 		try {
 			List<String> list_year = new ArrayList<String>();
 			String table_list_name = " (`term`, `all_year`";
@@ -101,7 +97,6 @@ public class App {
 			System.out.println(endyear);
 			int num;
 			List<String> visualTerms = readInputFile(pathname);
-			int m = 0;
 			for (String term : visualTerms) {
 				int[] num_result = new int[16]; 
 				System.out.println(term);
@@ -124,7 +119,7 @@ public class App {
 				System.out.println(query);
 				SqlConnection connection = new SqlConnection();
 				SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
-				command.addParameter(new SqlParameter("term",terms[m], Types.VARCHAR));
+				command.addParameter(new SqlParameter("term",term.split(" ")[0], Types.VARCHAR));
 				command.addParameter(new SqlParameter("all_year",num_result[0], Types.INTEGER));
 				int i = 1; 
 				for (String para : list_year) {
@@ -134,7 +129,6 @@ public class App {
 				int rowsEffected = command.execute();
 				System.out.println(rowsEffected + " rows inserted!");
 				connection.close();
-				m ++;
 			}	
 		} catch (Exception e) {
 			e.printStackTrace();

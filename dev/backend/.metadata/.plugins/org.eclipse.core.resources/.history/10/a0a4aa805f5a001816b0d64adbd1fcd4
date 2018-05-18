@@ -101,8 +101,8 @@ public class App {
 			System.out.println(endyear);
 			int num;
 			List<String> visualTerms = readInputFile(pathname);
-			int m = 0;
 			for (String term : visualTerms) {
+				int m = 0;
 				int[] num_result = new int[16]; 
 				System.out.println(term);
 				String query = "SELECT COUNT(*) AS num FROM " + ARTICLES_TABLE + 
