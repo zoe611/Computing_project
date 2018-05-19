@@ -165,10 +165,12 @@
     </div>
     <div class="duplica" v-if="result.duplicate">
       <p class="dup_title">Are you searching for?</p>
-      <div class="dup_form" v-for="(item, index) in result.duplicate" :key="item.id" @click="search_author_id(index)">
-        <p class="name">{{item.author_name}},{{item.author_fname}}</p>
-        <p class="des">{{item.des}}</p>
-        <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about {{request.term}}</p>
+      <div class="duplicate">
+        <div class="dup_form" v-for="(item, index) in result.duplicate" :key="item.id" @click="search_author_id(index)">
+          <p class="name">{{item.author_name}},{{item.author_fname}}</p>
+          <p class="des">{{item.des}}</p>
+          <p class="des" v-if="item.num_term">{{item.num_term}} articles wrote about {{request.term}}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -189,7 +191,7 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://43.240.98.137/test2.php',
+      api: 'http://43.240.98.120/test2.php',
       //      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
@@ -917,5 +919,9 @@ export default {
     font-size: 1em;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
+  }
+  .duplicate {
+    height: 500px;
+    overflow: scroll;
   }
 </style>
