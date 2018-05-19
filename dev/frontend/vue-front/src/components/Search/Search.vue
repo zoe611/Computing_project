@@ -191,7 +191,7 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://43.240.98.120/test2.php',
+      api: 'http://localhost/test2.php',
       //      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
