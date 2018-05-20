@@ -88,9 +88,12 @@
     bottom: 10
 }"></d3-bar>
       </div>
-      <div class="rank" v-if="result.rank">
-        <p class="rank_title">Author Rank for {{request.term}}</p>
-        <div class="rank-bar" v-for="(item,index) in result.rank" :key="item.id">
+      <div class="rank">
+        <div class="loading2" v-if="loading2">
+          <Spinner class="load2" name="folding-cube" color="#14C7FF"/>
+        </div>
+        <p class="rank_title" v-if="rank">Author Rank for {{request.term}}</p>
+        <div class="rank-bar" v-for="(item,index) in rank" :key="item.id">
           <p class="rank_name">{{item.name}}</p>
           <p class="rank_value">{{item.value}}<span class="unit"> articles</span></p>
           <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}" @click="search_rank(index)"></div>
@@ -123,7 +126,7 @@
         <h3 :class="request.sort === 'relative' ? 'active_filter': 'filter'" @click="search_sort('relative')">Sort by relevance</h3>
         <h3 :class="request.sort === 'sort_pubdate' ? 'active_filter': 'filter'" @click="search_sort('sort_pubdate')">Sort by date</h3>
       </div>
-      <div class="filter_term" v-if="this.request.author_id && this.request.method != 'search_author_id_term'">
+      <div class="filter_term" v-if="filter_keyword">
         <h3 class="filter_custom">Filter by keywords</h3>
         <div class="customTime">
           <input type="search" class = "custom_filter" placeholder="keyword" ref="keyword" maxlength="84" required>
@@ -205,6 +208,10 @@ export default {
         author_name: '',
         author_des: ''
       },
+      rank_request: {
+        method: 'rank',
+        term: ''
+      },
       settings: {
         strokeColor: '#29B5FF',
         width: 100,
@@ -221,11 +228,17 @@ export default {
       rank_max: -1,
       rank_color: {0: '#E1E6FA', 1: '#C4D7ED', 2: '#ABC8E2', 3: '#4B7FB0', 4: '#2F60A1'},
       isCustom: false,
-      isFilter: false
+      isFilter: false,
+      rank: null,
+      loading2: false,
+      filter_keyword: false
     }
   },
   mounted: function () {
     this.search_recent()
+    if(this.$refs.term_input.value === '') {
+      console.log('fsdfsdfs')
+    }
   },
   methods: {
     search () {
@@ -236,7 +249,9 @@ export default {
           console.log(response)
           if (response.bodyText !== 'empty search') {
             this.result = response.data
-            this.rank_max = this.result.rank_max
+            if(this.request.method === 'search' && this.request.author_search === '') {
+              this.loading2 = true
+            }
             this.loading = false
             if (this.result.author) {
               this.request.author_id = this.result.author.author_id
@@ -265,8 +280,25 @@ export default {
       this.request.author_des = ''
       this.isCustom = false
       this.result = {}
+      this.rank = null
+      if(this.$refs.term_input.value === '') {
+        this.filter_keyword = true
+      } else {
+        this.filter_keyword = false
+      }
       this.request.author_search = this.$refs.author_input.value
       this.request.term = this.$refs.term_input.value
+      if(this.request.author_search === ''){
+        this.rank_request.term = this.request.term
+        this.$http.post(this.api, this.rank_request).then((response) =>{
+          this.loading2 = false
+        console.log(response)
+        if(response.data.term === this.request.term){
+          this.rank = response.data.rank
+          this.rank_max = response.data.rank_max
+        }
+        })
+      }
       this.search()
     },
     search_recent () {
@@ -281,7 +313,7 @@ export default {
       } else if (this.request.term === '') {
         this.request.method = 'search_author_id'
       } else {
-        this.request.method = 'search'
+        this.request.method = 'search_term'
       }
       this.search()
     },
@@ -293,7 +325,7 @@ export default {
       } else if (this.request.term === '') {
         this.request.method = 'search_author_id'
       } else {
-        this.request.method = 'search'
+        this.request.method = 'search_term'
       }
       this.search()
     },
@@ -311,13 +343,14 @@ export default {
       this.search()
     },
     search_rank (index) {
-      this.request.author_id = this.result.rank[index].author_id
-      this.request.author_name = this.result.rank[index].name
-      this.request.author_fname = this.result.rank[index].author_fname
-      this.request.author_des = this.result.rank[index].author_des
-      this.$refs.author_input.value = this.result.rank[index].name
+      this.request.author_id = this.rank[index].author_id
+      this.request.author_name = this.rank[index].name
+      this.request.author_fname = this.rank[index].author_fname
+      this.request.author_des = this.rank[index].author_des
+      this.$refs.author_input.value = this.rank[index].name
       this.request.method = 'search_author_id_term'
       this.result = {}
+      this.rank = null
       this.search()
     },
     search_filter_term () {
@@ -886,6 +919,13 @@ export default {
     margin-top: 200px;
     margin-left: 43%;
     margin-right: 8%;
+  }
+  .load2 {
+    width: 100px;
+    height: 100px;
+    margin-top: 150px;
+    margin-left: 40%;
+    margin-right: 40%;
   }
   .relation {
     padding: 20px;
