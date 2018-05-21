@@ -236,7 +236,7 @@ export default {
   },
   mounted: function () {
     this.search_recent()
-    if(this.$refs.term_input.value === '') {
+    if (this.$refs.term_input.value === '') {
       console.log('fsdfsdfs')
     }
   },
@@ -249,7 +249,7 @@ export default {
           console.log(response)
           if (response.bodyText !== 'empty search') {
             this.result = response.data
-            if(this.request.method === 'search' && this.request.author_search === '') {
+            if (this.request.method === 'search' && this.request.author_search === '') {
               this.loading2 = true
             }
             this.loading = false
@@ -281,22 +281,22 @@ export default {
       this.isCustom = false
       this.result = {}
       this.rank = null
-      if(this.$refs.term_input.value === '') {
+      if (this.$refs.term_input.value === '') {
         this.filter_keyword = true
       } else {
         this.filter_keyword = false
       }
       this.request.author_search = this.$refs.author_input.value
       this.request.term = this.$refs.term_input.value
-      if(this.request.author_search === ''){
+      if (this.request.author_search === '') {
         this.rank_request.term = this.request.term
-        this.$http.post(this.api, this.rank_request).then((response) =>{
+        this.$http.post(this.api, this.rank_request).then((response) => {
           this.loading2 = false
-        console.log(response)
-        if(response.data.term === this.request.term){
-          this.rank = response.data.rank
-          this.rank_max = response.data.rank_max
-        }
+          console.log(response)
+          if (response.data.term === this.request.term) {
+            this.rank = response.data.rank
+            this.rank_max = response.data.rank_max
+          }
         })
       }
       this.search()
