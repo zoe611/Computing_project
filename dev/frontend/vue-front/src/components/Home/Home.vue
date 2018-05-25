@@ -30,7 +30,7 @@ export default {
       window.open('http://43.240.98.120:8080/?#/search')
     },
     see: function () {
-      window.open('http://43.240.98.120:8080:8080/?#/profile')
+      window.open('http://43.240.98.120:8080/?#/profile')
     }
   }
 }
