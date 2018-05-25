@@ -27,10 +27,10 @@ export default {
   },
   methods: {
     show: function () {
-      window.open('http://localhost:8080/?#/search')
+      window.open('http://43.240.98.120:8080/?#/search')
     },
     see: function () {
-      window.open('http://localhost:8080/?#/profile')
+      window.open('http://43.240.98.120:8080:8080/?#/profile')
     }
   }
 }
