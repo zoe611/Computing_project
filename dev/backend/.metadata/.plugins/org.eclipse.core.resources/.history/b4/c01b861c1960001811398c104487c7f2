@@ -65,7 +65,6 @@ public class App {
 		app.startTimer();
 	}
 	
-	// timer for update the article every day/week
 	private void startTimer(){
         TimerTask task = new TimerTask() {
             @Override

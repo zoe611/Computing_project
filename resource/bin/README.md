@@ -1,2 +1,0 @@
-# spinal-pubmed
-
