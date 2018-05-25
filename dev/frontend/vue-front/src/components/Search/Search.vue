@@ -163,7 +163,7 @@
     </div>
     <div class="articles" v-if="result.result === 'no result'">
       <p class="result_title">
-        There is no result for the search
+        There is no result for the search.
       </p>
     </div>
     <div class="duplica" v-if="result.duplicate">
@@ -194,7 +194,7 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://43.240.98.120/search.php',
+      api: 'http://localhost/test/Computing_project/search.php',
       //      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
