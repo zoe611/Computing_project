@@ -1,0 +1,21 @@
+Scenarios:
+
+1- Find all articles
+2- Find a selected article
+3- Find all the authors of a given article
+4- Find all the articles of a given author
+5- Find all the authors related to a given author?
+    1- Get all distinct authors: authors_list
+DO
+    2- Take first/next author from authors_list: A
+    key: A
+    3- How many authors has A worked with?
+        1- Get list of all articles for author A : articles_list
+        DO
+            2- Take first/next article : art1
+-->output (value.append:):      1- Get all authors for article 'art1'
+
+        UNTIL(articles_list is not empty)
+
+UNTIL(authors_list is not empty)
+
