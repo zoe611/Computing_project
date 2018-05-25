@@ -1,0 +1,770 @@
+package au.edu.unimelb;
+
+import au.edu.unimelb.sri.data.SqlCommand;
+import au.edu.unimelb.sri.data.SqlConnection;
+import au.edu.unimelb.sri.data.SqlParameter;
+import au.edu.unimelb.sri.net.BaseNetworkAccess;
+import org.json.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import java.text.DateFormat;  
+import java.text.ParseException;  
+import java.text.SimpleDateFormat;  
+import java.util.Calendar;  
+import java.util.Date;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.*;
+
+
+/**
+ * Extract article metadata from pubmed
+ * <p>
+ * #publications returned and #unique authors
+ * <p>
+ * extract the top 100 authors (=who published the most papers) from the data
+ */
+public class App {
+
+	Scanner scanner;
+	ObjectMapper mapper = new ObjectMapper();
+	Map<String, String> searchResults = new LinkedHashMap<String, String>();
+
+	BaseNetworkAccess baseNet = new BaseNetworkAccess();
+
+	String IDLIST_TABLE = "terms_idlist";
+	String ARTICLES_TABLE = "articles";
+	String AUTHORS_TABLE = "author";
+	String AUTHOR_ARTICLE_TABLE = "authors_articles";
+	String NO_AUTHOR_DES = "no description about the author";
+	String VISUAL_TABLE = "visual"; 
+
+	public static void main(String[] args) {
+		App app = new App();
+		startTimer();
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");  
+//		Calendar cal = Calendar.getInstance(); 
+//		Date now = new Date(); 
+//		cal.setTime(now);
+//		cal.add(Calendar.DATE, -6);
+//	    System.out.println(sdf.format(now));
+//	    System.out.println(sdf.format(cal.getTime()));
+//		app.updateVisual();
+	}
+	
+	private int selectVisual(String query) {
+		int num = 0;
+		try {
+			SqlConnection connection = new SqlConnection();
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			ResultSet resultSet = command.executeSelect();
+			while(resultSet.next()) {
+				num = resultSet.getInt("num");
+			}
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return num;
+	}
+	
+	private void updateVisual() {
+		Calendar cal=Calendar.getInstance();
+		String pathname = "src/main/resources/visualterms.txt";
+		String [] terms = {"rehabilitation","regeneration","paraplegia","trauma","chronic","demographics"
+				,"pain","tetraplegia","stroke","acute care","depression","health education","pressure sores"
+				,"autonomic dysreflexia","respiratory complications","bladder management","diabetes",
+				"independence","hypotension/hypertension","heart attack"}; 
+		try {
+			SqlConnection connection = new SqlConnection();
+			String query = "DELETE FROM " + VISUAL_TABLE;
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			command.execute();
+			List<String> list_year = new ArrayList<String>();
+			String table_list_name = " (`term`, `all_year`";
+			int startyear = 2004;
+			int endyear = cal.get(Calendar.YEAR); 
+			for(int i = startyear;i <= endyear ; i++) {
+				table_list_name = table_list_name + " , `" + i + "` ";
+				list_year.add(Integer.toString(i));
+			}
+			table_list_name = table_list_name + ")";
+			System.out.println(endyear);
+			int num;
+			List<String> visualTerms = readInputFile(pathname);
+			int m = 0;
+			for (String term : visualTerms) {
+				int[] num_result = new int[16]; 
+				System.out.println(term);
+				query = "SELECT COUNT(*) AS num FROM " + ARTICLES_TABLE + 
+						" WHERE MATCH (`article_title`,`abstract`,`keywords`) AGAINST ('" + 
+						term + "') ";
+				System.out.println(query);
+				num = selectVisual(query);
+				num_result[0] = num;
+				int count = 1; 
+				for(int i = startyear; i <= endyear ; i++) {
+					String new_query = query + "AND year = " + i;
+					System.out.println(new_query);
+					num = selectVisual(new_query);
+					num_result[count] = num;
+					count ++;
+				}
+				query = "INSERT INTO " + VISUAL_TABLE + table_list_name + 
+						"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				command = new SqlCommand(query, connection.getDatabaseConnection());
+				command.addParameter(new SqlParameter("term",terms[m], Types.VARCHAR));
+				command.addParameter(new SqlParameter("all_year",num_result[0], Types.INTEGER));
+				int i = 1; 
+				for (String para : list_year) {
+					command.addParameter(new SqlParameter(para,num_result[i], Types.INTEGER));
+					i ++;
+				}
+				int rowsEffected = command.execute();
+				System.out.println(rowsEffected + " rows inserted!");
+				connection.close();
+				m ++;
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+	}
+	
+	/**
+	 * UPDATE THE DATABASE EVERY WEEK
+	 */
+	private void update() {
+		String pathname = "src/main/resources/searchterms.txt";
+		try {
+			List<String> searchTerms = readInputFile(pathname);
+			for (String term : searchTerms) {
+				List idList = search(term,"2004/01/01","2018/05/14");
+				storeToDB(idList, term);
+			}
+			System.out.println("table terms_idlist is updated.");
+			createTableArticle();
+			System.out.println("table aritcles is updated.");
+			updateArticleTable();
+			System.out.println("table aritcles is detail updated.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * GENERATE THE DATABASE
+	 */
+	private void run() {
+		String pathname = "src/main/resources/searchterms.txt";
+		// create the terms_idlist table
+		try {
+//			// create the terms_idlist table
+//			List<String> searchTerms = readInputFile(pathname);
+//			for (String term : searchTerms) {
+//				List idList = search(term,"2004/01/01","2018/05/14");
+//				storeToDB(idList, term);
+//			}
+//			System.out.println("table terms_idlist is updated.");
+//			createTableArticle();
+//			System.out.println("table aritcles is updated.");
+			updateArticleTable();
+			System.out.println("table aritcles is detail updated.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		    System.out.println("");
+		}
+	}
+
+	/**
+	 * functions for create the terms_idlist table
+	 */
+
+	/**
+	 *
+	 * @param term
+	 * @return
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	private List<String> search(String term, String mindate, String maxdate) throws URISyntaxException, IOException {
+		List<String> idList = new ArrayList<String>();
+		String result = baseNet.httpGet(buildSearchRequestURI(term, 1, 1, mindate, maxdate));
+		int hits = findTotalHits(result);
+		idList = getIdList(term, hits, mindate, maxdate);
+		return idList;
+	}
+
+	/**
+	 * this function is used to get the article id
+	 * 
+	 * @param term
+	 * @param hits
+	 * @return
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	private List<String> getIdList(String term, int hits,String mindate, String maxdate) throws IOException, URISyntaxException {
+		List<String> idList = new ArrayList<String>();
+		/**
+		 * pagination uses retstart and retmax params
+		 *
+		 * retmax = # of records returned
+		 *
+		 * retstart = start at specified recorod number
+		 *
+		 * ex: retmax=1000 & retstart=1 Start at record no 1 and return 1000
+		 * records
+		 *
+		 * retmax=1000 & retstart=1001 Start at record no 1001 and return next
+		 * 1000 records
+		 *
+		 */
+		int retmax = 1000;
+		int retstart = 1;
+		for (int i = 0; i < hits; i++) {
+			String result = baseNet.httpGet(buildSearchRequestURI(term, retstart, retmax, mindate, maxdate));
+			JsonNode root = mapper.readValue(result, JsonNode.class);
+			JsonNode listNode = root.get("esearchresult").withArray("idlist");
+			List<String> list = mapper.convertValue(listNode, List.class);
+			idList.addAll(list);
+			hits = hits - retmax;
+			retstart = retmax + retstart;
+		}
+		return idList;
+	}
+
+	private int findTotalHits(String result) throws IOException {
+		int hits = 0;
+		JsonNode root = mapper.readValue(result, JsonNode.class);
+		hits = root.get("esearchresult").get("count").asInt();
+		return hits;
+	}
+
+	/**
+	 * insert term, idList and number of hits to db idlists
+	 *
+	 * @param idList
+	 * @param term
+	 *
+	 * @throws SQLException
+	 */
+	private void storeToDB(List idList, String term) throws SQLException {
+
+		String query = "INSERT INTO " + IDLIST_TABLE + " (term,hits,idlist) " + "VALUES (?,?,?)";
+		SqlConnection connection = new SqlConnection();
+		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+
+		String histsList = listToString(idList);
+
+		command.addParameter(new SqlParameter("term", term, Types.VARCHAR));
+		command.addParameter(new SqlParameter("hits", idList.size(), Types.INTEGER));
+		command.addParameter(new SqlParameter("idList", histsList, Types.LONGNVARCHAR));
+
+		int rowsEffected = command.execute();
+		System.out.println(rowsEffected + " rows inserted!");
+		connection.close();
+
+	}
+
+	/**
+	 * this func is used to build the url of the pubmed
+	 * 
+	 * @param term
+	 * @param retstart
+	 * @param retmax
+	 * @return
+	 * @throws URISyntaxException
+	 */
+	private URI buildSearchRequestURI(String term, int retstart, int retmax, String mindate, String maxdate) throws URISyntaxException {
+		return new URIBuilder().setScheme("https").setHost("eutils.ncbi.nlm.nih.gov/entrez")
+				.setPath("/eutils/esearch.fcgi").setParameter("term", term).setParameter("db", "pubmed")
+				.setParameter("usehistory", "y").setParameter("retmode", "json").setParameter("datetype", "pdat")
+				// TODO: CHECK DATE
+				.setParameter("mindate", mindate).setParameter("maxdate", maxdate)
+				.setParameter("retmax", Integer.toString(retmax)).setParameter("retstart", Integer.toString(retstart))
+				.setParameter("email", "junwenz@unimelb.edu.au").setParameter("tool", "SRI_metadata_extraction")
+				.build();
+	}
+
+	/**
+	 * functions for create the articles table
+	 */
+	private void createTableArticle() throws Exception {
+		String query = "SELECT * FROM " + IDLIST_TABLE;
+		SqlConnection connection = new SqlConnection();
+		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+		ResultSet resultSet = command.executeSelect();
+		while (resultSet.next()) {
+			String term = resultSet.getString("term");
+			String idlist_string = resultSet.getString("idlist");
+			List idList = new ArrayList();
+			idList = stringToList(idlist_string);
+			Iterator<String> iter = idList.iterator();
+			while (iter.hasNext()) {
+				String next = iter.next();
+				if (!next.equals("")) {
+					Long docId = Long.valueOf(next);
+					query = "INSERT INTO " + ARTICLES_TABLE
+							+ " (article_id,searchterm) VALUES (?,?) ON duplicate KEY UPDATE article_id_pk = article_id_pk";
+					command = new SqlCommand(query, connection.getDatabaseConnection());
+					command.addParameter(new SqlParameter("article_id", docId, Types.BIGINT));
+					command.addParameter(new SqlParameter("searchterm", term, Types.VARCHAR));
+					int rowsEffected = command.execute();
+					System.out.println(rowsEffected + " rows inserted!");
+					try {
+						URI uri = baseNet.buildSummaryRequestURI(docId.toString());
+						String result = baseNet.httpGet(uri);
+						JSONObject result_json = new JSONObject(result);
+						JSONObject summary = result_json.getJSONObject("result").getJSONObject(next);
+						String epudate = summary.getString("epubdate");
+						String source = summary.getString("fulljournalname");
+						String title = summary.getString("title");
+						String sort_title = summary.getString("sorttitle");
+						String eLocationId = summary.getString("elocationid");
+						String pub_type = summary.get("pubtype").toString();
+						String publisher_name = summary.getString("publishername");
+						String doc_type = summary.getString("doctype");
+						String sort_pubdate = summary.getString("sortpubdate").substring(0, 10);
+						int year = Integer.parseInt(summary.getString("sortpubdate").substring(0, 4));
+						String first_author = summary.getString("sortfirstauthor");
+						if (pub_type.length() > 2) {
+							pub_type = pub_type.substring(2, pub_type.length() - 2);
+							System.out.println("pub_type" + pub_type);
+						}
+						query = "UPDATE articles SET article_summary = ? WHERE article_id = " + docId + " AND "
+								+ "article_summary = \"\" OR article_summary is null";
+						command = new SqlCommand(query, connection.getDatabaseConnection());
+						SqlParameter param = new SqlParameter("article_summary", SqlParameter.asPGObject(result),
+								Types.LONGVARCHAR);
+						command.addParameter(param);
+						int rowsEffected2 = command.execute();
+						System.out.println(rowsEffected2 + " rows effected.");
+						query = "UPDATE articles SET article_title = ? , source = ? ,"
+								+ " sort_title = ?, pub_type = ? , elocation_id = ? , pub_date = ? , doc_type = ? "
+								+ ", publisher_name = ? , sort_pubdate = ? , first_author = ? , year = ?  WHERE article_id = "
+								+ docId;
+						command = new SqlCommand(query, connection.getDatabaseConnection());
+						SqlParameter param1 = new SqlParameter("article_title", title, Types.VARCHAR);
+						SqlParameter param2 = new SqlParameter("source", source, Types.VARCHAR);
+						SqlParameter param3 = new SqlParameter("sort_title", sort_title, Types.VARCHAR);
+						SqlParameter param4 = new SqlParameter("pub_type", pub_type, Types.VARCHAR);
+						SqlParameter param5 = new SqlParameter("elocation_id", eLocationId, Types.VARCHAR);
+						SqlParameter param6 = new SqlParameter("pub_date", epudate, Types.VARCHAR);
+						SqlParameter param7 = new SqlParameter("doc_type", doc_type, Types.VARCHAR);
+						SqlParameter param8 = new SqlParameter("publisher_name", publisher_name, Types.VARCHAR);
+						SqlParameter param9 = new SqlParameter("sort_pubdate", sort_pubdate, Types.VARCHAR);
+						SqlParameter param10 = new SqlParameter("first_author", first_author, Types.VARCHAR);
+						SqlParameter param11 = new SqlParameter("year", year, Types.INTEGER);
+						command.addParameter(param1);
+						command.addParameter(param2);
+						command.addParameter(param3);
+						command.addParameter(param4);
+						command.addParameter(param5);
+						command.addParameter(param6);
+						command.addParameter(param7);
+						command.addParameter(param8);
+						command.addParameter(param9);
+						command.addParameter(param10);
+						command.addParameter(param11);
+						int rowsEffected3 = command.execute();
+						System.out.println(rowsEffected3 + " rows effected.");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		connection.close();
+	}
+
+	/**
+	 * functions for update detail the articles table and create author table
+	 * and author_article table
+	 */
+
+	private void updateArticleTable() throws Exception {
+		String query = "SELECT * FROM " + ARTICLES_TABLE;
+		SqlConnection connection = new SqlConnection();
+		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+		ResultSet resultSet = command.executeSelect();
+		while (resultSet.next()) {
+			try {
+				String article_id = resultSet.getString("article_id");
+				URI uri = baseNet.buildDetailRequestURI(article_id);
+				String result = baseNet.httpGet(uri);
+				String lines[] = formateResult(result);
+				processDetailAbstract(lines, article_id);
+				createTableAuthor(article_id, lines);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}
+
+	private String[] formateResult(String result) {
+		String lines[] = result.split("\\r?\\n");
+		int flag = 3;
+		for (int i = 3; i < lines.length - 1; i++) {
+			String str = lines[i];
+			String pre = str.substring(0, 4);
+			String content = str.substring(5, str.length());
+			if (pre.equals("    ")) {
+				lines[flag - 1] = lines[flag - 1] + content;
+			} else {
+				lines[flag] = lines[i];
+				flag++;
+			}
+		}
+		String[] new_lines = new String[flag];
+		for (int i = 0; i < new_lines.length; i++) {
+			new_lines[i] = lines[i];
+		}
+		return new_lines;
+	}
+
+	private void processDetailAbstract(String[] lines, String article_id) throws SQLException {
+		List<String> keywords = new ArrayList<String>();
+		List<String> full_authors = new ArrayList<String>();
+		List<String> author = new ArrayList<String>();
+		String abs = "";
+
+		for (int i = 3; i < lines.length; i++) {
+			String str = lines[i];
+			String pre = str.substring(0, 5);
+			String content = str.substring(6, str.length());
+			switch (pre) {
+			case "AB  -":
+				abs = content;
+				break;
+			case "FAU -":
+				full_authors.add(content.replace(",", ""));
+				break;
+			case "AU  -":
+				author.add(content);
+				break;
+			case "OT  -":
+				keywords.add(content);
+				break;
+			}
+		}
+		String keyword = listToString(keywords);
+		String f_authors = listToString(full_authors);
+		String authors = listToString(author);
+		SqlConnection connection = new SqlConnection();
+
+		String query = "UPDATE articles SET sort_authors = ? , full_authors = ? ,"
+				+ " abstract = ?, keywords = ? WHERE article_id = " + article_id;
+
+		SqlParameter param_kw = new SqlParameter("keywords", keyword, Types.VARCHAR);
+		SqlParameter param_author = new SqlParameter("sort_authors", authors, Types.VARCHAR);
+		SqlParameter param_f_author = new SqlParameter("full_authors", f_authors, Types.VARCHAR);
+		SqlParameter param_abs = new SqlParameter("abstract", abs, Types.VARCHAR);
+
+		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+		command.addParameter(param_author);
+		command.addParameter(param_f_author);
+		command.addParameter(param_abs);
+		command.addParameter(param_kw);
+
+		int rowsEffected = command.execute();
+		System.out.println(rowsEffected + " rows inserted.");
+
+		connection.close();
+	}
+
+	/**
+	 * this function is used to create the author table
+	 * 
+	 * @param article_id
+	 * @param result
+	 * @throws Exception
+	 */
+	private void createTableAuthor(String article_id, String[] lines) throws Exception {
+		List des = new ArrayList();
+		String author_fname = "";
+		String author_name = "";
+		String orcid = "";
+		for (int i = 3; i < lines.length; i++) {
+			String str = lines[i];
+			String pre = str.substring(0, 5);
+			String content = str.substring(6, str.length());
+			switch (pre) {
+			case "FAU -":
+				if (!author_fname.equals("")) {
+					System.out.println("author_fname is " + author_fname);
+					System.out.println("author_name is " + author_name);
+					System.out.println("author_des is " + des.toString());
+					if (des.size() > 0) {
+						updateTableAuthor_withCheck(article_id, author_name, author_fname, des);
+					} else {
+						updateTableAuthor(article_id, author_name, author_fname);
+					}
+					des = new ArrayList();
+				}
+				author_fname = content.replace(",", "");
+				break;
+			case "AU  -":
+				author_name = content;
+				break;
+			case "AD  -":
+				List<String> temp = new ArrayList<String>(Arrays.asList(content.split(",|;")));
+				if (des.size() > 0) {
+					des.addAll(temp);
+				} else {
+					des = temp;
+				}
+				des = formDes(des);
+				break;
+			case "AUID":
+				orcid = content;
+				storeToOrcid(author_name, orcid);
+				break;
+			case "LA  -":
+				System.out.println("author_fname is " + author_fname);
+				System.out.println("author_name is " + author_name);
+				System.out.println("author_des is " + des.toString());
+				System.out.println("orcid is" + orcid);
+				if (des.size() > 0) {
+					updateTableAuthor_withCheck(article_id, author_name, author_fname, des);
+				} else {
+					updateTableAuthor(article_id, author_name, author_fname);
+				}
+			}
+		}
+	}
+
+	private void storeToOrcid(String author_name, String orcid) {
+		String query = "INSERT INTO orcid (author_name,orcid) VALUES (?,?)";
+		SqlConnection connection = new SqlConnection();
+		try {
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			SqlParameter param_author = new SqlParameter("author_name", author_name, Types.BIGINT);
+			SqlParameter param_orcid = new SqlParameter("author_fname", orcid, Types.VARCHAR);
+			command.addParameter(param_author);
+			command.addParameter(param_orcid);
+			int rows = command.execute();
+		    connection.close();
+			System.out.println(rows + " rows inserted.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateTableAuthor(String article_id, String author_name, String author_fname) {
+		int author_id = getAuthorId(author_fname, NO_AUTHOR_DES);
+		if (author_id == -1) {
+			author_id = insertTableAuthor(author_name, author_fname, NO_AUTHOR_DES);
+			if (author_id == -1) {
+				System.out.println("not insert !!!!!! ");
+			}
+		}
+		insertAuthorArticle(author_id, article_id);
+	}
+
+	private void updateTableAuthor_withCheck(String article_id, String author_name, String author_fname, List des)
+			throws Exception {
+		int author_id = checkAuthorExist(author_fname, des);
+		if (author_id == -1) {
+			author_id = insertTableAuthor(author_name, author_fname, listToString(des));
+			if (author_id == -1) {
+				System.out.println("not insert !!!!!! ");
+			}
+		}
+		insertAuthorArticle(author_id, article_id);
+	}
+
+	private void insertAuthorArticle(int author_id, String article_id) {
+		String query = "INSERT INTO " + AUTHOR_ARTICLE_TABLE + " (author_id, article_id) " + "VALUES (?,?)";
+		SqlConnection connection = new SqlConnection();
+		try {
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			SqlParameter param_author = new SqlParameter("author_id", author_id, Types.BIGINT);
+			SqlParameter param_article = new SqlParameter("author_fname", article_id, Types.VARCHAR);
+			command.addParameter(param_author);
+			command.addParameter(param_article);
+			int rows = command.execute();
+			connection.close();
+			System.out.println(rows + " rows inserted.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private int getAuthorId(String author_fname, String des) {
+		int author_id = -1;
+		SqlConnection connection = new SqlConnection();
+		String query = "SELECT * FROM " + AUTHORS_TABLE + " WHERE author_fname = '" + author_fname.replace("\'", "\\'")
+				+ "' AND author_des = '" + des.replace("\'", "\\'") + "'";
+		SqlCommand command;
+		try {
+			command = new SqlCommand(query, connection.getDatabaseConnection());
+			ResultSet resultSet = command.executeSelect();
+			while (resultSet.next()) {
+				author_id = resultSet.getInt("id");
+			}
+			connection.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return author_id;
+	}
+
+	private int insertTableAuthor(String author_name, String author_fname, String des) {
+		int author_id = -1;
+		String query = "INSERT INTO " + AUTHORS_TABLE + " (author_name,author_fname,author_des) " + "VALUES (?,?,?)";
+		SqlConnection connection = new SqlConnection();
+		try {
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			SqlParameter param_name = new SqlParameter("author_name", author_name, Types.VARCHAR);
+			SqlParameter param_fname = new SqlParameter("author_fname", author_fname, Types.VARCHAR);
+			SqlParameter param_des = new SqlParameter("author_des", des, Types.VARCHAR);
+			command.addParameter(param_name);
+			command.addParameter(param_fname);
+			command.addParameter(param_des);
+			int rows = command.execute();
+			System.out.println(rows + "rows inserted.");
+			connection.close();
+			author_id = getAuthorId(author_fname, des);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return author_id;
+	}
+
+	private int checkAuthorExist(String author_fname, List<String> des) throws Exception {
+		String query = "SELECT * FROM " + AUTHORS_TABLE + " WHERE author_fname = '" + author_fname.replace("\'", "\\'")
+				+ "'";
+		SqlConnection connection = new SqlConnection();
+		SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+		ResultSet resultSet = command.executeSelect();
+		while (resultSet.next()) {
+			int author_id = resultSet.getInt("id");
+			String author_des = resultSet.getString("author_des");
+			if (!des.equals(NO_AUTHOR_DES)) {
+				List<String> author_des_list = stringToList(author_des);
+				int similar = getSimilar(author_des_list, des);
+				if (similar > 0) {
+					System.out.println(author_des.toString() + des.toString());
+					return author_id;
+				}
+			}
+		}
+		connection.close();
+		return -1;
+
+	}
+
+	private int getSimilar(List<String> author_des, List<String> des) {
+		int count = 0;
+		for (int i = 0; i < author_des.size(); i++) {
+			String str = author_des.get(i);
+			if (des.contains(str)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * remove whitespace and duplicate and "." in the list
+	 * 
+	 * @param des
+	 * @return
+	 */
+	private List<String> formDes(List<String> des) {
+		List form_des = new ArrayList();
+		for (int i = 0; i < des.size(); i++) {
+			String str = des.get(i).trim();
+			str = str.replace(".", "");
+			str = str.replaceAll("\\d+", "");
+			if (!form_des.contains(str)) {
+				form_des.add(str);
+			}
+		}
+		return form_des;
+	}
+
+	private List<String> stringToList(String strs) {
+		String str[] = strs.split(",");
+		return Arrays.asList(str);
+	}
+
+	public static String listToString(List<String> list) {
+		if (list == null) {
+			return null;
+		}
+		StringBuilder result = new StringBuilder();
+		boolean first = true;
+		for (String string : list) {
+			if (first) {
+				first = false;
+			} else {
+				result.append(",");
+			}
+			result.append(string);
+		}
+		return result.toString();
+	}
+
+	private List readInputFile(String pathname) throws FileNotFoundException {
+		scanner = new Scanner(new File(pathname));
+		List<String> searchTerms = new ArrayList<String>();
+
+		while (scanner.hasNext()) {
+			String term = scanner.nextLine();
+			term = term.trim();
+			if (!StringUtils.isBlank(term)) {
+				searchTerms.add(term);
+				System.out.println(term);
+			}
+		}
+
+		System.out.println("Total search terms: " + searchTerms.size());
+
+		return searchTerms;
+	}
+	
+	private static String getCurrentTime() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
+	
+	private void startTimer(){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("task   run:"+getCurrentTime());
+                update();
+                updateVisual();
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 0,1000*60*60*24);
+    }
+}

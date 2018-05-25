@@ -6,9 +6,6 @@ import au.edu.unimelb.sri.data.SqlParameter;
 import au.edu.unimelb.sri.net.BaseNetworkAccess;
 import org.json.*;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,7 +20,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-
+import java.text.DateFormat;  
+import java.text.ParseException;  
+import java.text.SimpleDateFormat;  
+import java.util.Calendar;  
+import java.util.Date;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -36,7 +37,6 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
 
-import javax.xml.soap.Text;
 
 /**
  * Extract article metadata from pubmed
@@ -62,7 +62,141 @@ public class App {
 
 	public static void main(String[] args) {
 		App app = new App();
-		app.updateVisual();
+		app.startTimer();
+	}
+	
+	private void startTimer(){
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("task   run:"+getCurrentTime());
+                update();
+                updateVisual();
+                System.out.println("task   end:"+getCurrentTime());
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 0,1000*60*60*24);
+    }
+	
+	/**
+	 * UPDATE THE DATABASE EVERY WEEK
+	 */
+	private void update() {
+		String pathname = "src/main/resources/searchterms.txt";
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");  
+			Calendar cal = Calendar.getInstance(); 
+			Date now = new Date(); 
+			cal.setTime(now);
+			cal.add(Calendar.DATE, -6);
+		    System.out.println("update data from : " + sdf.format(cal.getTime()) + " to " + sdf.format(now));
+			List<String> searchTerms = readInputFile(pathname);
+			for (String term : searchTerms) {
+				List<String> idList = search(term,sdf.format(cal.getTime()),sdf.format(now));
+				storeToDB(idList, term);
+				for (String article_id : idList) {
+					insertArticleTable(article_id,term);
+					insertAuthorTable(article_id);
+				}
+			}
+			System.out.println("table terms_idlist is updated.");
+			createTableArticle();
+			System.out.println("table aritcles is updated.");
+			updateArticleTable();
+			System.out.println("table aritcles is detail updated.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void insertArticleTable(String article_id, String term) {
+		try {
+			SqlConnection connection = new SqlConnection();
+			String query = "INSERT INTO " + ARTICLES_TABLE
+					+ " (article_id,searchterm) VALUES (?,?) ON duplicate KEY UPDATE article_id_pk = article_id_pk";
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			command.addParameter(new SqlParameter("article_id",Long.parseLong(article_id), Types.BIGINT));
+			command.addParameter(new SqlParameter("searchterm", term, Types.VARCHAR));
+			int rowsEffected = command.execute();
+			System.out.println(rowsEffected + " rows inserted!");
+			URI uri = baseNet.buildSummaryRequestURI(article_id);
+			String result = baseNet.httpGet(uri);
+			JSONObject result_json = new JSONObject(result);
+			JSONObject summary = result_json.getJSONObject("result").getJSONObject(article_id);
+			String epudate = summary.getString("epubdate");
+			String source = summary.getString("fulljournalname");
+			String title = summary.getString("title");
+			String sort_title = summary.getString("sorttitle");
+			String eLocationId = summary.getString("elocationid");
+			String pub_type = summary.get("pubtype").toString();
+			String publisher_name = summary.getString("publishername");
+			String doc_type = summary.getString("doctype");
+			String sort_pubdate = summary.getString("sortpubdate").substring(0, 10);
+			int year = Integer.parseInt(summary.getString("sortpubdate").substring(0, 4));
+			String first_author = summary.getString("sortfirstauthor");
+			if (pub_type.length() > 2) {
+				pub_type = pub_type.substring(2, pub_type.length() - 2);
+				System.out.println("pub_type" + pub_type);
+			}
+			query = "UPDATE articles SET article_summary = ? WHERE article_id = " + article_id + " AND "
+					+ "article_summary = \"\" OR article_summary is null";
+			command = new SqlCommand(query, connection.getDatabaseConnection());
+			SqlParameter param = new SqlParameter("article_summary", SqlParameter.asPGObject(result),
+					Types.LONGVARCHAR);
+			command.addParameter(param);
+			int rowsEffected2 = command.execute();
+			System.out.println(rowsEffected2 + " rows effected.");
+			query = "UPDATE articles SET article_title = ? , source = ? ,"
+					+ " sort_title = ?, pub_type = ? , elocation_id = ? , pub_date = ? , doc_type = ? "
+					+ ", publisher_name = ? , sort_pubdate = ? , first_author = ? , year = ?  WHERE article_id = "
+					+ article_id;
+			command = new SqlCommand(query, connection.getDatabaseConnection());
+			SqlParameter param1 = new SqlParameter("article_title", title, Types.VARCHAR);
+			SqlParameter param2 = new SqlParameter("source", source, Types.VARCHAR);
+			SqlParameter param3 = new SqlParameter("sort_title", sort_title, Types.VARCHAR);
+			SqlParameter param4 = new SqlParameter("pub_type", pub_type, Types.VARCHAR);
+			SqlParameter param5 = new SqlParameter("elocation_id", eLocationId, Types.VARCHAR);
+			SqlParameter param6 = new SqlParameter("pub_date", epudate, Types.VARCHAR);
+			SqlParameter param7 = new SqlParameter("doc_type", doc_type, Types.VARCHAR);
+			SqlParameter param8 = new SqlParameter("publisher_name", publisher_name, Types.VARCHAR);
+			SqlParameter param9 = new SqlParameter("sort_pubdate", sort_pubdate, Types.VARCHAR);
+			SqlParameter param10 = new SqlParameter("first_author", first_author, Types.VARCHAR);
+			SqlParameter param11 = new SqlParameter("year", year, Types.INTEGER);
+			command.addParameter(param1);
+			command.addParameter(param2);
+			command.addParameter(param3);
+			command.addParameter(param4);
+			command.addParameter(param5);
+			command.addParameter(param6);
+			command.addParameter(param7);
+			command.addParameter(param8);
+			command.addParameter(param9);
+			command.addParameter(param10);
+			command.addParameter(param11);
+			int rowsEffected3 = command.execute();
+			System.out.println(rowsEffected3 + " rows effected.");
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void insertAuthorTable(String article_id) {
+		URI uri;
+		try {
+			uri = baseNet.buildDetailRequestURI(article_id);
+			String result = baseNet.httpGet(uri);
+			String lines[] = formateResult(result);
+			processDetailAbstract(lines, article_id);
+			createTableAuthor(article_id, lines);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private int selectVisual(String query) {
@@ -89,6 +223,10 @@ public class App {
 				,"autonomic dysreflexia","respiratory complications","bladder management","diabetes",
 				"independence","hypotension/hypertension","heart attack"}; 
 		try {
+			SqlConnection connection = new SqlConnection();
+			String query = "DELETE FROM " + VISUAL_TABLE;
+			SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+			command.execute();
 			List<String> list_year = new ArrayList<String>();
 			String table_list_name = " (`term`, `all_year`";
 			int startyear = 2004;
@@ -105,7 +243,7 @@ public class App {
 			for (String term : visualTerms) {
 				int[] num_result = new int[16]; 
 				System.out.println(term);
-				String query = "SELECT COUNT(*) AS num FROM " + ARTICLES_TABLE + 
+				query = "SELECT COUNT(*) AS num FROM " + ARTICLES_TABLE + 
 						" WHERE MATCH (`article_title`,`abstract`,`keywords`) AGAINST ('" + 
 						term + "') ";
 				System.out.println(query);
@@ -121,9 +259,7 @@ public class App {
 				}
 				query = "INSERT INTO " + VISUAL_TABLE + table_list_name + 
 						"VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-				System.out.println(query);
-				SqlConnection connection = new SqlConnection();
-				SqlCommand command = new SqlCommand(query, connection.getDatabaseConnection());
+				command = new SqlCommand(query, connection.getDatabaseConnection());
 				command.addParameter(new SqlParameter("term",terms[m], Types.VARCHAR));
 				command.addParameter(new SqlParameter("all_year",num_result[0], Types.INTEGER));
 				int i = 1; 
@@ -144,11 +280,13 @@ public class App {
 	}
 	
 	/**
-	 * UPDATE THE DATABASE EVERY WEEK
+	 * GENERATE THE DATABASE
 	 */
-	private void update() {
+	private void run() {
 		String pathname = "src/main/resources/searchterms.txt";
+		// create the terms_idlist table
 		try {
+//			// create the terms_idlist table
 			List<String> searchTerms = readInputFile(pathname);
 			for (String term : searchTerms) {
 				List idList = search(term,"2004/01/01","2018/05/14");
@@ -157,29 +295,6 @@ public class App {
 			System.out.println("table terms_idlist is updated.");
 			createTableArticle();
 			System.out.println("table aritcles is updated.");
-			updateArticleTable();
-			System.out.println("table aritcles is detail updated.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * GENERATE THE DATABASE
-	 */
-	private void run() {
-		String pathname = "src/main/resources/searchterms.txt";
-		// create the terms_idlist table
-		try {
-//			// create the terms_idlist table
-//			List<String> searchTerms = readInputFile(pathname);
-//			for (String term : searchTerms) {
-//				List idList = search(term,"2004/01/01","2018/05/14");
-//				storeToDB(idList, term);
-//			}
-//			System.out.println("table terms_idlist is updated.");
-//			createTableArticle();
-//			System.out.println("table aritcles is updated.");
 			updateArticleTable();
 			System.out.println("table aritcles is detail updated.");
 		} catch (Exception e) {
@@ -698,7 +813,8 @@ public class App {
 		}
 		return form_des;
 	}
-
+	
+	/** common functions**/
 	private List<String> stringToList(String strs) {
 		String str[] = strs.split(",");
 		return Arrays.asList(str);
@@ -738,4 +854,10 @@ public class App {
 
 		return searchTerms;
 	}
+	
+	private static String getCurrentTime() {
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
 }

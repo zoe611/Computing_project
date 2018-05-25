@@ -25,7 +25,7 @@ public class SqlConnection {
             "?loglevel=2&logUnclosedConnections=true";
 
 	private static String JDBC_DRIVER = "com.mysql.jdbc.Driver"; 
-	private static String DB_URL = "jdbc:mysql://43.240.98.120/spinal_pubmed";
+	private static String DB_URL = "jdbc:mysql://localhost/spinal_pubmed";
     private static String USERNAME = "root";
     private static String PASSWORD = "root";
     private static int MAX_POOL_SIZE = 20;
