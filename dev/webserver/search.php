@@ -4,7 +4,7 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
 $method = $_POST['method'];
-getBarData('11700','','author_id');
+//getBarData('11700','','author_id');
 //getRankData("acute");
 //search_term("recovery care");
 //$method = 'visual';

@@ -165,6 +165,15 @@
       <p class="result_title">
         There is no result for the search.
       </p>
+      <p class="result_title" v-if="request.method === 'search'">
+        <span>
+          If you are searching the author and the keywords at the same time,
+        </span><span>
+          make sure you have enter the full name of the author.
+        </span><span>
+          Or search the author first and then filter the article by the keywords!
+        </span>
+      </p>
     </div>
     <div class="duplica" v-if="result.duplicate">
       <p class="dup_title">Are you searching for?</p>
@@ -194,7 +203,7 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://localhost/test/Computing_project/search.php',
+      api: 'http://43.240.98.120/search.php',
       //      api:'http://43.240.98.137/test2.php',
       request: {
         method: '',
@@ -279,27 +288,32 @@ export default {
       this.request.author_fname = ''
       this.request.author_des = ''
       this.isCustom = false
+      this.loading2 = false
       this.result = {}
       this.rank = null
-      if (this.$refs.term_input.value === '') {
-        this.filter_keyword = true
+      if (this.$refs.author_input.value === '' && this.$refs.term_input.value === '') {
+        alert('Please enter author or topic!')
       } else {
-        this.filter_keyword = false
+        if (this.$refs.term_input.value === '') {
+          this.filter_keyword = true
+        } else {
+          this.filter_keyword = false
+        }
+        this.request.author_search = this.$refs.author_input.value
+        this.request.term = this.$refs.term_input.value
+        if (this.request.author_search === '') {
+          this.rank_request.term = this.request.term
+          this.$http.post(this.api, this.rank_request).then((response) => {
+            this.loading2 = false
+            console.log(response)
+            if (response.data.term === this.request.term) {
+              this.rank = response.data.rank
+              this.rank_max = response.data.rank_max
+            }
+          })
+        }
+        this.search()
       }
-      this.request.author_search = this.$refs.author_input.value
-      this.request.term = this.$refs.term_input.value
-      if (this.request.author_search === '') {
-        this.rank_request.term = this.request.term
-        this.$http.post(this.api, this.rank_request).then((response) => {
-          this.loading2 = false
-          console.log(response)
-          if (response.data.term === this.request.term) {
-            this.rank = response.data.rank
-            this.rank_max = response.data.rank_max
-          }
-        })
-      }
-      this.search()
     },
     search_recent () {
       this.request.method = 'search_recent'
