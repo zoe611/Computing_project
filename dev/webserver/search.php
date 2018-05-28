@@ -108,7 +108,7 @@ function getVisualData() {
 // function for the request of the recent articles
 function search_recent() {
   $conn = getConnectionDB();
-//  $query = 'SELECT article_id,article_title,sort_authors,sort_pubdate FROM `articles` ORDER BY sort_pubdate DESC LIMIT 10';
+  //  $query = 'SELECT article_id,article_title,sort_authors,sort_pubdate FROM `articles` ORDER BY sort_pubdate DESC LIMIT 10';
   $query = 'SELECT * FROM `recent`';
   $result = $conn->query($query);
   $data = array();
@@ -387,7 +387,7 @@ function search_author_id_term($author_id,$term,$author_name,$author_fname,$auth
     }
     $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
     $query_base = "SELECT * ," . $match . " AS relevance " .
-             "FROM `articles` WHERE (" . $article_list . ") AND " . $match ;
+      "FROM `articles` WHERE (" . $article_list . ") AND " . $match ;
     if($filter === 'all' and $sort === 'relative') {
       $query = $query_base. " ORDER BY relevance DESC";
     } else if ($filter === 'all' and $sort === 'sort_pubdate') {
@@ -477,7 +477,9 @@ function search_term($term) {
     $response['bar'] = getBarData("",$term,"term");
   } else {
     $response['result'] = "no result";
-    $response['bar'] = getBarData("",$term,"term");
+    if ($_POST['method'] != 'search') {
+      $response['bar'] = getBarData("",$term,"term");
+    }
   }
   $response = json_encode(my_utf8_encode($response),JSON_UNESCAPED_UNICODE);
   print $response;
@@ -504,25 +506,26 @@ function getBarData($author_id,$term,$method) {
   $conn = getConnectionDB();
   $query_year_start = date('Y',time());
   $query_year_end = 2004;
+  $query_year = "year > 2003 AND year <= " . $query_year_start . " ";
   switch($method){
     case "author_id":
       $query_base = getArticleID($author_id);
-      $query_base = $query_base . " ";
+      $query_base = $query_base . " AND " . $query_year;
       break;
     case "author_id_term":
       $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
       $query_base = getArticleID($author_id);
-      $query_base = $query_base . " AND " . $match . " " ;
+      $query_base = $query_base . " AND " . $match . " AND " .$query_year;
       break;
     case "term":
-      $query_base = "SELECT COUNT(*) AS num , * FROM `articles` WHERE "
-        . "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."') ";
+      $query_base = "SELECT COUNT(*) AS num , year FROM `articles` WHERE "
+        . "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."') AND " . $query_year;
       break;
     case "all":
-      $query_base = "SELECT COUNT(*) AS num , * FROM `articles` ";
+      $query_base = "SELECT COUNT(*) AS num , year FROM `articles` WHERE " .$query_year ;
       break;
   }
-  $query = $query_base . "GROUP BY year ORDER BY year";
+  $query = $query_base . " GROUP BY year ORDER BY year";
   $result = $conn->query($query);
   while($row = $result->fetch_assoc()) {
     while($row['year'] != $query_year_end) {
@@ -534,9 +537,9 @@ function getBarData($author_id,$term,$method) {
       $query_year_end ++;
     }
     $bar = array(
-        'key' => $query_year_end,
-        'value' => $row['num'],
-      );
+      'key' => $query_year_end,
+      'value' => $row['num'],
+    );
     array_push($data,$bar);
     $query_year_end ++;
   }
@@ -550,27 +553,27 @@ function getBarData($author_id,$term,$method) {
   }
   return $data;
 
-//  while ($query_year_start >= $query_year_end) {
-//    $query = $query_base . " year = " . $query_year_start
-//      . " GROUP BY year";
-//    $result = $conn->query($query);
-//    $row= $result->fetch_assoc();
-//    $rows_num = $result->num_rows;
-//    if($rows_num > 0 ) {
-//      $bar = array(
-//        'key' => $query_year_start,
-//        'value' => $row['num'],
-//      );
-//    } else {
-//      $bar = array(
-//        'key' => $query_year_start,
-//        'value' => 0,
-//      );
-//    }
-//    array_push($data,$bar);
-//    $query_year_start = $query_year_start - 1;
-//  }
-//  return $data;
+  //  while ($query_year_start >= $query_year_end) {
+  //    $query = $query_base . " year = " . $query_year_start
+  //      . " GROUP BY year";
+  //    $result = $conn->query($query);
+  //    $row= $result->fetch_assoc();
+  //    $rows_num = $result->num_rows;
+  //    if($rows_num > 0 ) {
+  //      $bar = array(
+  //        'key' => $query_year_start,
+  //        'value' => $row['num'],
+  //      );
+  //    } else {
+  //      $bar = array(
+  //        'key' => $query_year_start,
+  //        'value' => 0,
+  //      );
+  //    }
+  //    array_push($data,$bar);
+  //    $query_year_start = $query_year_start - 1;
+  //  }
+  //  return $data;
 }
 
 function getRankData($term) {
@@ -584,17 +587,10 @@ function getRankData($term) {
     . " GROUP BY c.id "
     . "ORDER BY num DESC LIMIT 5";
   $result = $conn->query($query);
-  $row = $result->fetch_assoc();
-  $response['rank_max'] = $row['num'];
-  $article = array (
-    'name' => $row['author_name'],
-    'value' => $row['num'],
-    'author_id' => $row['id'],
-    'author_fname' => $row['author_fname'],
-    'author_des' => $row['author_des'],
-  );
-  array_push($data,$article);
-  while($row = $result->fetch_assoc()){
+  $num = $result->num_rows;
+  if($num > 0) {
+    $row = $result->fetch_assoc();
+    $response['rank_max'] = $row['num'];
     $article = array (
       'name' => $row['author_name'],
       'value' => $row['num'],
@@ -603,11 +599,21 @@ function getRankData($term) {
       'author_des' => $row['author_des'],
     );
     array_push($data,$article);
+    while($row = $result->fetch_assoc()){
+      $article = array (
+        'name' => $row['author_name'],
+        'value' => $row['num'],
+        'author_id' => $row['id'],
+        'author_fname' => $row['author_fname'],
+        'author_des' => $row['author_des'],
+      );
+      array_push($data,$article);
+    }
+    $response['rank'] = $data;
+    $response['term'] = $term;
+    $response = json_encode($response,JSON_UNESCAPED_UNICODE);
+    print $response;
   }
-  $response['rank'] = $data;
-  $response['term'] = $term;
-  $response = json_encode($response,JSON_UNESCAPED_UNICODE);
-  print $response;
   $conn->close();
 }
 
@@ -666,7 +672,7 @@ function getRelation($author_id,$author_name) {
 }
 
 function getConnectionDB() {
-  $serverName = '127.0.0.1';
+  $serverName = '43.240.98.120';
   $username = 'root';
   $password = 'root';
   $databaseName = 'spinal_pubmed';

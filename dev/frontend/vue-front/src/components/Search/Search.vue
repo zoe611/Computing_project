@@ -161,11 +161,13 @@
         <p class="author">{{item.author}},{{item.pdate}}</p>
       </div>
     </div>
-    <div class="articles" v-if="result.result === 'no result'">
+    <div class="articles" v-if="result.result === 'no result' && request.method != 'search'">
       <p class="result_title">
         There is no result for the search.
       </p>
-      <p class="result_title" v-if="request.method === 'search'">
+    </div>
+    <div class="no_result" v-if="result.result === 'no result' && request.method === 'search'">
+      <p class="result_title">
         <span>
           If you are searching the author and the keywords at the same time,
         </span><span>
@@ -755,6 +757,18 @@ export default {
     box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
     float: left;
   }
+  .no_result {
+    width: 82%;
+    height: 600px;
+    margin-top: 20px;
+    margin-left: 9%;
+    margin-right: 9%;
+    background: #fff;
+    overflow: scroll;
+    -webkit-box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+    box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
+    float: left;
+  }
   .result_title_recent {
     font-size: 28px;
     margin-top: 20px;
@@ -784,6 +798,7 @@ export default {
     text-align: left;
     padding-top: 2%;
     padding-left: 30px;
+    padding-right: 30px;
     font-size: 1.5em;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;

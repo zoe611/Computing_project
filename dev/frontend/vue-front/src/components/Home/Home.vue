@@ -27,10 +27,10 @@ export default {
   },
   methods: {
     show: function () {
-      window.open('http://43.240.98.120:8080/?#/search')
+      window.open('http://43.240.98.120/SCI/?#/search')
     },
     see: function () {
-      window.open('http://43.240.98.120:8080/?#/profile')
+      window.open('http://43.240.98.120/SCI/?#/profile')
     }
   }
 }
@@ -41,10 +41,12 @@ export default {
   .home {
     margin-top:0;
     width:100%;
-    height:800px;
+    height: 100%;
     background-image:url("../../assets/new.jpg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
   }
 /* style for the title */
   h1{
