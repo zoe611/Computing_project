@@ -71,39 +71,7 @@
     <div class="visual" v-if="result.bar || result.rank || result.relation">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
-        <d3-bar :data="bar" :options="{
-    // bar config
-    fill : '#ABC8E2',
-    stroke : '#ABC8E2',
-    fillOpacity : 1,
-    strokeOpacity : 1,
-
-    // axis font config
-    axisFontSize : 12,
-    axisFontWeight : 400,
-
-    // axis label config
-    axisYLabel : 'Number of publications',
-    axisXLabel : 'Year',
-    axisXLabelHeight : 30,
-    axisYLabelWidth : 30,
-
-    // axis label font config
-    axisLabelFontSize : 10,
-    axisLabelFontWeight : 350,
-    axisLabelFontOpacity : 0.5,
-
-    // axis lane config
-    axisXHeight : 25,
-    axisYWidth : 35,
-
-    isVertical : false,
-}" width="100%" height="400px" :margin="{
-    left: 0,
-    top: 10,
-    right: 0,
-    bottom: 10
-}"></d3-bar>
+        <div class="bar"  ref="bar" style="width:100%" v-if="show_bar()"></div>
       </div>
       <div class="rank">
         <div class="loading2" v-if="loading2">
@@ -123,7 +91,7 @@
     </div>
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
-    <div style="height:10px;width:100%;"></div>
+    <div style="height:20px;width:100%;"></div>
     <div class = "search_filter" v-if="show()">
       <div class="filters_time">
         <h3 :class="request.filter === 'all' ? 'active_filter' : 'filter'" @click="search_filter('all')">Any time</h3>
@@ -417,6 +385,17 @@ export default {
         return true
       }
     },
+    show_bar () {
+      if (this.result.bar) {
+        d3.select('.bar_svg').remove()
+        this.formBar()
+        this.show_bar_svg()
+        return true
+      } else {
+        return false
+      }
+      return true
+    },
     search_relation (authorId, authorName, authorFname, authorDes) {
       this.request.filter = 'all'
       this.request.sort = 'relative'
@@ -455,7 +434,7 @@ export default {
     },
     showrelation () {
       if (this.result.relation) {
-        d3.select('.test').remove()
+        d3.select('.tests').remove()
         this.nodes = this.result.relation.nodes
         this.links = this.result.relation.links
         this.showSvg()
@@ -469,6 +448,81 @@ export default {
     },
     show_detail_relationship () {
       this.showSvgMore()
+    },
+    show_bar_svg () {
+      var that = this
+      var tooltip = d3.select('.content').append('div')
+              .attr('class', 'tooltip')
+              .style('display', 'none')
+              .style('background', '#fff')
+              .style('padding', '5px')
+              .style('opacity','1')
+              .style('font-size', '16px')
+              .style('border-radius', '2px')
+      var svg = d3.select('.bar')
+        .append('svg')
+        .attr('class', 'bar_svg')
+        .attr('width', 400)
+        .attr('height', 400)
+      d3.select('.bar_svg').style('overflow','inherit')
+      var width = 400
+      var height = 400
+      var padding = {left:0, right:30, top:20, bottom:20}
+      var xScale = d3.scaleBand().rangeRound([0, width]).paddingInner(0.05).align(0.1).domain(that.bar.map(function(d) { return d.key}))
+      var yScale = d3.scaleLinear()
+        .domain([0, d3.max(that.bar, function(d) { return d.value })]).nice()
+        .range([height - padding.top - padding.bottom, 0])
+      var xAxis = d3.axisBottom().scale(xScale)
+      var max = d3.max(that.bar, function(d) { return d.value })
+      console.log('max' + max)
+      var yAxis
+      var rectPadding = 4
+      if(max >= 4) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(5);
+      } else if (max == 3) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(3);
+      } else if (max == 2) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(2);
+      } else if (max == 1) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(1);
+      }
+      var rects = svg.selectAll(".MyRect")
+              .data(that.bar)
+              .enter()
+              .append("rect")
+              .attr("class","MyRect")
+              .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+              .attr("x", function(d,i){
+                return xScale(d.key) + rectPadding/2
+              } )
+              .attr("y",function(d){
+                return yScale(d.value)
+              })
+              .attr("width", xScale.bandwidth() - rectPadding )
+              .attr("height", function(d){
+                return height - padding.top - padding.bottom - yScale(d.value)
+              })
+              .attr('fill',"#ABC8E2")
+              .on('mouseover', function(d) {
+                tooltip.style('display', 'inline')
+              })
+              .on('mouseout', function(d, i){
+                tooltip.style('display', 'none')
+              })
+              .on('mousemove', function(d, i){
+                tooltip
+                        .html(d.value)
+                        .style('left', (d3.event.pageX - 30) + 'px')
+                        .style('top', (d3.event.pageY - 30) + 'px')
+              })
+      svg.append("g")
+              .attr("class","axis")
+              .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
+              .call(xAxis)
+      svg.append("g")
+              .attr("class","axis")
+              .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+              .call(yAxis)
     },
     showSvgMore () {
       var that = this
@@ -813,7 +867,24 @@ export default {
     position:relative;
     margin: 1px auto;
   }
-
+  .tooltip{
+    position      : absolute;
+    text-align    : center;
+    max-width     : 70px;
+    max-height    : 30px;
+    padding       : 8px;
+    border        : none;
+    border-radius : 8px;
+    margin-top    : -30px;
+    font          : 10px sans-serif;
+    background    : black;
+    color         : white;
+    pointer-events: none;
+    height: auto;
+    width: 100px;
+    background: white;
+    border-radius: 5px;
+  }
   .search input {
     width: 40%;
     height: 41px;
@@ -1009,6 +1080,12 @@ export default {
     font-family: "Times New Roman", Times, serif;
     color: #337ab7 ;
   }
+  .bar {
+    overflow: inherit;
+  }
+  .bar_svg {
+    overflow: inherit;
+  }
   .rank {
     width:45%;
     float: right;
@@ -1036,16 +1113,12 @@ export default {
   .unit {
     font-size: 18px;
   }
-  .bar {
-    height:100%;
-    box-shadow: 0 0 5px 5px rgba(0,0,1,0.03);
-  }
   .rank-bar {
     width: 100%;
     height: 60px;
   }
   .visual {
-    height: 450px;
+    height: 500px;
     width: 100%;
   }
   .rank_title {
@@ -1095,8 +1168,10 @@ export default {
     margin-right: 40%;
   }
   .relation {
+    width:45%;
     float: right;
-    margin-right: 9%;
+    margin-right: 4%;
+    margin-left: 1%;
   }
   .relation_title {
     font-size: 1.5em;
