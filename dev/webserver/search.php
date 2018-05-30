@@ -6,7 +6,7 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 $method = $_POST['method'];
 //getBarData('11700','','author_id');
 //getRankData("acute");
-//search_term("health care");
+//search_term("recovery care");
 //$method = 'visual';
 //search_both('mazzon e','trauma');
 //search_recent();
@@ -71,6 +71,12 @@ function wrong_post() {
 
 function getVisualData() {
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $response = array();
   $query = 'SELECT * FROM `visual`';
   $result = $conn->query($query);
@@ -108,7 +114,12 @@ function getVisualData() {
 // function for the request of the recent articles
 function search_recent() {
   $conn = getConnectionDB();
-  //  $query = 'SELECT article_id,article_title,sort_authors,sort_pubdate FROM `articles` ORDER BY sort_pubdate DESC LIMIT 10';
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query = 'SELECT * FROM `recent`';
   $result = $conn->query($query);
   $data = array();
@@ -207,49 +218,56 @@ function search_author($author_name) {
     print $response;
     $conn->close();
   } else {
-    $query = "SELECT * FROM `author` WHERE MATCH (author_name,author_fname) AGAINST ('".$author_name."')";
-    $result = $conn->query($query);
-    $rows = $result->num_rows;
-    if($rows > 0) {
-      $data = array();
-      while($row = $result->fetch_assoc()){
-        $authors = array (
-          'author_id' => $row['id'],
-          'author_name' => $row['author_name'],
-          'author_fname' => $row['author_fname'],
-          'des' => $row['author_des'],
-        );
-        array_push($data,$authors);
-      }
-      $response['duplicate'] = $data;
-      $response = json_encode($response);
-      print $response;
-      $conn->close();
-    } else {
-      $query = "SELECT * FROM `author` WHERE author_fname REGEXP '" . $author_name . "'";
+    if(!strpos($author_name," ")){
+      $query = "SELECT * FROM `author` WHERE MATCH (author_name,author_fname) AGAINST ('".$author_name."')";
       $result = $conn->query($query);
       $rows = $result->num_rows;
       if($rows > 0) {
         $data = array();
-        while ($row = $result->fetch_assoc()) {
-          $authors = array(
-            'author_id'    => $row['id'],
-            'author_name'  => $row['author_name'],
+        while($row = $result->fetch_assoc()){
+          $authors = array (
+            'author_id' => $row['id'],
+            'author_name' => $row['author_name'],
             'author_fname' => $row['author_fname'],
-            'des'          => $row['author_des'],
+            'des' => $row['author_des'],
           );
-          array_push($data, $authors);
+          array_push($data,$authors);
         }
         $response['duplicate'] = $data;
         $response = json_encode($response);
         print $response;
         $conn->close();
       } else {
-        $conn->close();
-        $response['result'] = "no result";
-        $response = json_encode($response,JSON_UNESCAPED_UNICODE);
-        print $response;
+        $query = "SELECT * FROM `author` WHERE author_fname REGEXP '" . $author_name . "'";
+        $result = $conn->query($query);
+        $rows = $result->num_rows;
+        if($rows > 0) {
+          $data = array();
+          while ($row = $result->fetch_assoc()) {
+            $authors = array(
+              'author_id'    => $row['id'],
+              'author_name'  => $row['author_name'],
+              'author_fname' => $row['author_fname'],
+              'des'          => $row['author_des'],
+            );
+            array_push($data, $authors);
+          }
+          $response['duplicate'] = $data;
+          $response = json_encode($response);
+          print $response;
+          $conn->close();
+        } else {
+          $conn->close();
+          $response['result'] = "no result";
+          $response = json_encode($response,JSON_UNESCAPED_UNICODE);
+          print $response;
+        }
       }
+    } else {
+      $conn->close();
+      $response['result'] = "no result";
+      $response = json_encode($response,JSON_UNESCAPED_UNICODE);
+      print $response;
     }
   }
 }
@@ -339,6 +357,12 @@ function search_author_id($author_id,$author_name,$author_fname,$author_des) {
   $filter = $_POST['filter'];
   $sort = $_POST['sort'];
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query_base = "SELECT * FROM `authors_articles` AS a JOIN `articles` AS b ON ".
     "a.article_id = b.article_id WHERE author_id = '".$author_id . "' ";
   if($filter === 'all' and $sort === 'relative') {
@@ -387,6 +411,12 @@ function search_author_id_term($author_id,$term,$author_name,$author_fname,$auth
   $filter = $_POST['filter'];
   $sort = $_POST['sort'];
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query = "SELECT article_id FROM authors_articles WHERE author_id = '".$author_id."'";
   $result = $conn->query($query);
   $rows_num = $result->num_rows;
@@ -479,7 +509,6 @@ function search_term($term) {
   }
   $result = $conn->query($query);
   $num_rows = $result->num_rows;
-  print $num_rows;
   if($num_rows > 0 ){
     $data = array();
     while($row = $result->fetch_assoc()){
@@ -507,6 +536,12 @@ function search_term($term) {
 
 function getArticleID($author_id) {
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query =  "SELECT article_id FROM `authors_articles` WHERE author_id = '". $author_id ."'";
   $result = $conn->query($query);
   $row = $result->fetch_assoc();
@@ -523,6 +558,12 @@ function getArticleID($author_id) {
 function getBarData($author_id,$term,$method) {
   $data = array();
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query_year_start = date('Y',time());
   $query_year_end = 2004;
   $query_year = "year > 2003 AND year <= " . $query_year_start . " ";
@@ -571,35 +612,19 @@ function getBarData($author_id,$term,$method) {
     $query_year_end ++;
   }
   return $data;
-
-  //  while ($query_year_start >= $query_year_end) {
-  //    $query = $query_base . " year = " . $query_year_start
-  //      . " GROUP BY year";
-  //    $result = $conn->query($query);
-  //    $row= $result->fetch_assoc();
-  //    $rows_num = $result->num_rows;
-  //    if($rows_num > 0 ) {
-  //      $bar = array(
-  //        'key' => $query_year_start,
-  //        'value' => $row['num'],
-  //      );
-  //    } else {
-  //      $bar = array(
-  //        'key' => $query_year_start,
-  //        'value' => 0,
-  //      );
-  //    }
-  //    array_push($data,$bar);
-  //    $query_year_start = $query_year_start - 1;
-  //  }
-  //  return $data;
 }
 
 function getRankData($term) {
   $data = array();
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
-  $query = "SELECT COUNT(*) AS num , c.author_name, c.id , c.author_fname, c.author_des "
+  $query = "SELECT COUNT(*) AS num , c.author_name, c.id , c.author_fname, c.author_des"
     . "FROM `articles` AS a JOIN `authors_articles` AS b JOIN `author` AS c "
     . "ON a.article_id = b.article_id AND b.author_id = c.id "
     . "WHERE " . $match
@@ -636,22 +661,14 @@ function getRankData($term) {
   $conn->close();
 }
 
-//function getRankMax($term) {
-//  $conn = getConnectionDB();
-//  $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
-//  $query = "SELECT COUNT(*) AS num , c.author_name, c.id "
-//    . "FROM `articles` AS a JOIN `authors_articles` AS b JOIN `author` AS c "
-//    . "ON a.article_id = b.article_id AND b.author_id = c.id "
-//    . "WHERE " . $match
-//    . " GROUP BY c.id "
-//    . "ORDER BY num DESC LIMIT 1";
-//  $result = $conn->query($query);
-//  $row = $result->fetch_assoc();
-//  return $row['num'];
-//}
-
 function getRelation($author_id,$author_name) {
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $links = array();
   $nodes = array();
   $node_author = array(
@@ -710,3 +727,4 @@ function my_utf8_encode($data) {
   }
   return $data;
 }
+
