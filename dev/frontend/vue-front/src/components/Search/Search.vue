@@ -1,5 +1,22 @@
 <template>
   <div class="content">
+    <modal name="modal_svg"
+           transition="nice-modal-fade"
+           classes="demo-modal-class"
+           :min-width="450"
+           :min-height="400"
+           :pivot-y="0.5"
+           :adaptive="true"
+           :scrollable="true"
+           :reset="true"
+           width="80%"
+           height="auto"
+           @opened="show_detail_relationship()">
+      <div class="modal_relation">
+        <p class="see_all" style="text-align: right; padding-right:5px">click outside the modal to close</p>
+        <p class="see_all" style="text-align: right; padding-right:5px">click on the author node to search further</p>
+      </div>
+    </modal>
     <div class="header">
       <h1>Spinal Cord Injury Search Hub</h1>
       <form class="search" action="">
@@ -81,7 +98,7 @@
     axisYWidth : 35,
 
     isVertical : false,
-}" width="100%" height="450px" :margin="{
+}" width="100%" height="400px" :margin="{
     left: 0,
     top: 10,
     right: 0,
@@ -100,12 +117,13 @@
         </div>
       </div>
       <div class="relation" v-if="showrelation()">
-        <p class="relation_title">Author Relationship</p>
+        <p class="relation_title" >Author Relationship</p>
+        <p class="see_all" @click="show_relation_more()">click me to show all</p>
       </div>
     </div>
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
-    <div style="height:65px;width:100%;"></div>
+    <div style="height:10px;width:100%;"></div>
     <div class = "search_filter" v-if="show()">
       <div class="filters_time">
         <h3 :class="request.filter === 'all' ? 'active_filter' : 'filter'" @click="search_filter('all')">Any time</h3>
@@ -192,7 +210,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import * as d3 from 'd3'
 import VuePaginateAl from 'vue-paginate-al'
@@ -208,9 +225,9 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      //      api: 'http://43.240.98.120/search.php',
+      api: 'http://43.240.98.120/search.php',
       //      api:'http://43.240.98.137/test2.php',
-      api: 'http://localhost/test/Computing_project/search.php',
+      //      api: 'http://localhost/test/Computing_project/search.php',
       request: {
         method: '',
         term: '',
@@ -231,7 +248,7 @@ export default {
         strokeColor: '#29B5FF',
         width: 100,
         svgWigth: 450,
-        svgHeight: 450
+        svgHeight: 370
       },
       svg: null,
       graph: null,
@@ -251,6 +268,7 @@ export default {
   },
   mounted: function () {
     this.search_recent()
+    this.$modal.hide('modal_svg')
   },
   methods: {
     search () {
@@ -445,6 +463,99 @@ export default {
       } else {
         return false
       }
+    },
+    show_relation_more () {
+      this.$modal.show('modal_svg')
+    },
+    show_detail_relationship () {
+      this.showSvgMore()
+    },
+    showSvgMore () {
+      var that = this
+      var svg = d3.select('.modal_relation')
+              .append('svg')
+              .attr('class', 'test')
+              .attr('width', 800)
+              .attr('height', 800)
+      var simulation = d3.forceSimulation(that.nodes)
+              .force('link', d3.forceLink(that.links).distance(100).strength(0.1))
+              .force('charge', d3.forceManyBody())
+              .force('center', d3.forceCenter(400, 400))
+      var links = d3.select('.test').append('g')
+              .attr('class', 'links')
+              .selectAll('line')
+              .data(that.links)
+              .enter().append('line')
+              .attr('stroke', '#0080A4')
+              .attr('stroke-width', function (d) {
+                return d.value
+              })
+      var nodes = d3.select('.test').append('g')
+              .attr('class', 'nodes')
+              .selectAll('g')
+              .data(that.nodes)
+              .enter().append('g')
+              .on('mouseover', function (d, i) {
+                d3.select(this).append('text').text(function (d) {
+                          return d.name
+                        })
+                        .attr('x', 6)
+                        .attr('y', 3)
+                d3.select(this).append('title')
+                        .text(function (d) {
+                          return d.name
+                        })
+              })
+              .on('mouseout', function (d, i) {
+                d3.select(this).select('title').remove()
+                d3.select(this).select('text').remove()
+              })
+      var circle = nodes
+              .append('circle')
+              .attr('r', 10)
+              .data(that.nodes)
+              .attr('fill', function (d) {
+                return d.color
+              })
+              .on('click', function (d) {
+                that.$modal.hide('modal_svg')
+                that.search_relation(d.id, d.name, d.fname, d.des)
+              })
+              .call(d3.drag()
+                      .on('start', function dragstarted(d) {
+                        if (!d3.event.active) simulation.alphaTarget(0.3).restart()
+                        d.fx = d.x
+                        d.fy = d.y
+                      })
+                      .on('drag', function dragged(d) {
+                        d.fx = d3.event.x
+                        d.fy = d3.event.y
+                      })
+                      .on('end', function dragended(d) {
+                        if (!d3.event.active) simulation.alphaTarget(0)
+                        d.fx = null
+                        d.fy = null
+                      })
+              )
+      simulation.on('tick', function ticked() {
+        nodes
+                .attr('transform', function (d) {
+                  return 'translate(' + d.x + ',' + d.y + ')'
+                })
+        links
+                .attr('x1', function (d) {
+                  return d.source.x
+                })
+                .attr('y1', function (d) {
+                  return d.source.y
+                })
+                .attr('x2', function (d) {
+                  return d.target.x
+                })
+                .attr('y2', function (d) {
+                  return d.target.y
+                })
+      })
     },
     showSvg () {
       var that = this
@@ -888,7 +999,7 @@ export default {
     width: 45%;
     /*background: #fff;*/
     padding-right:10px;
-    margin-left: 2%;
+    margin-left: 4%;
     margin-top: 20px;
     float: left;
   }
@@ -984,13 +1095,15 @@ export default {
     margin-right: 40%;
   }
   .relation {
-    padding: 20px;
+    float: right;
+    margin-right: 9%;
   }
   .relation_title {
     font-size: 1.5em;
     font-weight: bold;
     font-family: "Times New Roman", Times, serif;
     color: #337ab7 ;
+    width: 100%;
   }
   .author_bar {
     margin-top: 30px;
@@ -1019,5 +1132,13 @@ export default {
   .duplicate {
     height: 500px;
     overflow: scroll;
+  }
+  .modal_relation {
+    background: #fff;
+  }
+  .see_all {
+    margin-bottom: 0;
+    color: #337ab7;
+    cursor: pointer;
   }
 </style>

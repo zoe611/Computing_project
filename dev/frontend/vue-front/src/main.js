@@ -7,7 +7,9 @@ import VueResource from 'vue-resource'
 import Vs from 'd3-vs'
 import Element from 'element-ui'
 import 'element-theme-default'
+import VModal from 'vue-js-modal'
 
+Vue.use(VModal)
 Vue.use(Element)
 Vue.use(Vs)
 Vue.use(VueResource)
