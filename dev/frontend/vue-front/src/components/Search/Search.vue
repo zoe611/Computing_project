@@ -81,7 +81,7 @@
     axisYWidth : 35,
 
     isVertical : false,
-}" width="100%" height="400px" :margin="{
+}" width="100%" height="450px" :margin="{
     left: 0,
     top: 10,
     right: 0,
@@ -105,7 +105,7 @@
     </div>
     <!--    filter by date  and sort modified -->
     <!--<div class = "search_filter" v-if="show()">-->
-    <div style="height:10px;width:100%;"></div>
+    <div style="height:65px;width:100%;"></div>
     <div class = "search_filter" v-if="show()">
       <div class="filters_time">
         <h3 :class="request.filter === 'all' ? 'active_filter' : 'filter'" @click="search_filter('all')">Any time</h3>
@@ -132,6 +132,9 @@
           <input type="search" class = "custom_filter" placeholder="keyword" ref="keyword" maxlength="84" required>
           <button type="submit" class="click" v-on:click="search_filter_term()">
             Search
+          </button>
+          <button type="submit" class="click" v-on:click="search_filter_term_clear()">
+            Clear
           </button>
         </div>
       </div>
@@ -169,7 +172,7 @@
     <div class="no_result" v-if="result.result === 'no result' && request.method === 'search'">
       <p class="result_title">
         <span>
-          If you are searching the author and the keywords at the same time,
+          There is no result for the search. If you are searching the author and the keywords at the same time,
         </span><span>
           make sure you have enter the full name of the author.
         </span><span>
@@ -205,8 +208,9 @@ export default {
       relation: null,
       nodes: null,
       links: null,
-      api: 'http://43.240.98.120/search.php',
+      //      api: 'http://43.240.98.120/search.php',
       //      api:'http://43.240.98.137/test2.php',
+      api: 'http://localhost/test/Computing_project/search.php',
       request: {
         method: '',
         term: '',
@@ -247,9 +251,6 @@ export default {
   },
   mounted: function () {
     this.search_recent()
-    if (this.$refs.term_input.value === '') {
-      console.log('fsdfsdfs')
-    }
   },
   methods: {
     search () {
@@ -282,6 +283,8 @@ export default {
       window.open('https://www.ncbi.nlm.nih.gov/pubmed/' + id)
     },
     search_click () {
+      var authorSearch = this.$refs.author_input.value
+      var termSearch = this.$refs.term_input.value
       this.request.filter = 'all'
       this.request.sort = 'relative'
       this.request.method = 'search'
@@ -293,22 +296,24 @@ export default {
       this.loading2 = false
       this.result = {}
       this.rank = null
-      if (this.$refs.author_input.value === '' && this.$refs.term_input.value === '') {
+      if (authorSearch === '' && termSearch === '') {
         alert('Please enter author or topic!')
+      } else if (this.testString(authorSearch) || this.testString(termSearch)) {
+        alert('No special characeter allowed!')
       } else {
-        if (this.$refs.term_input.value === '') {
+        if (termSearch === '') {
           this.filter_keyword = true
         } else {
           this.filter_keyword = false
         }
-        this.request.author_search = this.$refs.author_input.value
-        this.request.term = this.$refs.term_input.value
+        this.request.author_search = authorSearch
+        this.request.term = termSearch
         if (this.request.author_search === '') {
           this.rank_request.term = this.request.term
           this.$http.post(this.api, this.rank_request).then((response) => {
-            this.loading2 = false
             console.log(response)
             if (response.data.term === this.request.term) {
+              this.loading2 = false
               this.rank = response.data.rank
               this.rank_max = response.data.rank_max
             }
@@ -359,19 +364,31 @@ export default {
       this.search()
     },
     search_rank (index) {
+      this.request.filter = 'all'
+      this.request.sort = 'relative'
       this.request.author_id = this.rank[index].author_id
       this.request.author_name = this.rank[index].name
       this.request.author_fname = this.rank[index].author_fname
       this.request.author_des = this.rank[index].author_des
       this.$refs.author_input.value = this.rank[index].name
       this.request.method = 'search_author_id_term'
+      this.request.author_search = this.rank[index].name
       this.result = {}
       this.rank = null
       this.search()
     },
     search_filter_term () {
+      this.request.filter = 'all'
+      this.request.sort = 'relative'
       this.request.method = 'search_author_id_term'
       this.request.term = this.$refs.keyword.value
+      this.result.result = null
+      this.search()
+    },
+    search_filter_term_clear () {
+      this.request.filter = 'all'
+      this.request.sort = 'relative'
+      this.request.method = 'search_author_id'
       this.result.result = null
       this.search()
     },
@@ -383,6 +400,8 @@ export default {
       }
     },
     search_relation (authorId, authorName, authorFname, authorDes) {
+      this.request.filter = 'all'
+      this.request.sort = 'relative'
       this.request.author_id = authorId
       this.request.author_name = authorName
       this.request.author_fname = authorFname
@@ -407,6 +426,14 @@ export default {
         item.value = Number(item.value)
       })
       this.bar = this.result.bar
+    },
+    testString (str) {
+      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
+      if (pattern.test(str)) {
+        return true
+      } else {
+        return false
+      }
     },
     showrelation () {
       if (this.result.relation) {

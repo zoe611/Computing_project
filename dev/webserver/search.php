@@ -6,7 +6,7 @@ header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Ac
 $method = $_POST['method'];
 //getBarData('11700','','author_id');
 //getRankData("acute");
-//search_term("recovery care");
+//search_term("health care");
 //$method = 'visual';
 //search_both('mazzon e','trauma');
 //search_recent();
@@ -173,6 +173,12 @@ function search() {
  */
 function search_author($author_name) {
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query = "SELECT * FROM `author` WHERE author_name = '".$author_name."' or " .
     "author_fname = '".$author_name."'";
   $result = $conn->query($query);
@@ -264,6 +270,12 @@ function search_author($author_name) {
  */
 function search_both($author_name,$term) {
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $query = "SELECT * FROM `author` WHERE author_name = '".$author_name."' or " .
     "author_fname = '".$author_name."'";
   $result = $conn->query($query);
@@ -439,6 +451,12 @@ function search_term($term) {
   $filter = $_POST['filter'];
   $sort = $_POST['sort'];
   $conn = getConnectionDB();
+  $query = "set character_set_client = gbk";
+  $conn->query($query);
+  $query = "set character_set_connection = utf8;";
+  $conn->query($query);
+  $query = "set character_set_results = utf8";
+  $conn->query($query);
   $title_relevance = "MATCH (article_title) AGAINST ('". $term ."')";
   $abstract_relevance = "MATCH (abstract) AGAINST ('". $term ."')";
   $keywords_relevance = "MATCH (keywords) AGAINST ('". $term ."')";
@@ -461,6 +479,7 @@ function search_term($term) {
   }
   $result = $conn->query($query);
   $num_rows = $result->num_rows;
+  print $num_rows;
   if($num_rows > 0 ){
     $data = array();
     while($row = $result->fetch_assoc()){
@@ -580,7 +599,7 @@ function getRankData($term) {
   $data = array();
   $conn = getConnectionDB();
   $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
-  $query = "SELECT COUNT(*) AS num , c.author_name, c.id "
+  $query = "SELECT COUNT(*) AS num , c.author_name, c.id , c.author_fname, c.author_des "
     . "FROM `articles` AS a JOIN `authors_articles` AS b JOIN `author` AS c "
     . "ON a.article_id = b.article_id AND b.author_id = c.id "
     . "WHERE " . $match
