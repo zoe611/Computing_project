@@ -474,6 +474,7 @@ export default {
     },
     showrelation () {
       if (this.result.relation) {
+        d3.select('.test').remove()
         this.nodes = this.result.relation.nodes
         this.links = this.result.relation.links
         this.showSvg()
