@@ -395,7 +395,6 @@ export default {
       } else {
         return false
       }
-      return true
     },
     search_relation (authorId, authorName, authorFname, authorDes) {
       this.request.filter = 'all'
@@ -427,7 +426,7 @@ export default {
       this.bar = this.result.bar
     },
     testString (str) {
-      var pattern = new RegExp("[~!@#$^&*()=|{}:;,\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“。，、？]")
+      var pattern = new RegExp('[~!@#$^&*()=|{}:;,\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“。，、？]')
       if (pattern.test(str)) {
         return true
       } else {
@@ -454,80 +453,80 @@ export default {
     show_bar_svg () {
       var that = this
       var tooltip = d3.select('.content').append('div')
-              .attr('class', 'tooltip')
-              .style('display', 'none')
-              .style('background', '#fff')
-              .style('padding', '5px')
-              .style('opacity','1')
-              .style('font-size', '16px')
-              .style('border-radius', '2px')
+        .attr('class', 'tooltip')
+        .style('display', 'none')
+        .style('background', '#fff')
+        .style('padding', '5px')
+        .style('opacity', '1')
+        .style('font-size', '16px')
+        .style('border-radius', '2px')
       var svg = d3.select('.bar')
         .append('svg')
         .attr('class', 'bar_svg')
         .attr('width', 400)
         .attr('height', 400)
-      d3.select('.bar_svg').style('overflow','inherit')
+      d3.select('.bar_svg').style('overflow', 'inherit')
       var width = 400
       var height = 400
-      var padding = {left:0, right:30, top:20, bottom:20}
-      var xScale = d3.scaleBand().rangeRound([0, width]).paddingInner(0.05).align(0.1).domain(that.bar.map(function(d) { return d.key}))
+      var padding = {left: 0, right: 30, top: 20, bottom: 20}
+      var xScale = d3.scaleBand().rangeRound([0, width]).paddingInner(0.05).align(0.1).domain(that.bar.map(function (d) { return d.key }))
       var yScale = d3.scaleLinear()
-        .domain([0, d3.max(that.bar, function(d) { return d.value })]).nice()
+        .domain([0, d3.max(that.bar, function (d) { return d.value })]).nice()
         .range([height - padding.top - padding.bottom, 0])
       var xAxis = d3.axisBottom().scale(xScale)
-      var max = d3.max(that.bar, function(d) { return d.value })
+      var max = d3.max(that.bar, function (d) { return d.value })
       console.log('max' + max)
       var yAxis
       var rectPadding = 4
-      if(max >= 4) {
-        yAxis = d3.axisLeft().scale(yScale).ticks(5);
-      } else if (max == 3) {
-        yAxis = d3.axisLeft().scale(yScale).ticks(3);
-      } else if (max == 2) {
-        yAxis = d3.axisLeft().scale(yScale).ticks(2);
-      } else if (max == 1) {
-        yAxis = d3.axisLeft().scale(yScale).ticks(1);
+      if (max >= 4) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(5)
+      } else if (max === 3) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(3)
+      } else if (max === 2) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(2)
+      } else if (max === 1) {
+        yAxis = d3.axisLeft().scale(yScale).ticks(1)
       }
-      var rects = svg.selectAll(".MyRect")
-              .data(that.bar)
-              .enter()
-              .append("rect")
-              .attr("class","MyRect")
-              .attr("transform","translate(" + padding.left + "," + padding.top + ")")
-              .attr("x", function(d,i){
-                return xScale(d.key) + rectPadding/2
-              } )
-              .attr("y",function(d){
-                return yScale(d.value)
-              })
-              .attr("width", xScale.bandwidth() - rectPadding )
-              .attr("height", function(d){
-                return height - padding.top - padding.bottom - yScale(d.value)
-              })
-              .attr('fill',"#ABC8E2")
-              .on('mouseover', function(d) {
-                d3.select(this).attr('fill',"#2F60A1")
-                tooltip.style('display', 'inline')
-              })
-              .on('mouseout', function(d, i){
-                d3.select(this).attr('fill',"#ABC8E2")
-                tooltip.style('display', 'none')
-              })
-              .on('mousemove', function(d, i){
-                d3.select(this).attr('fill',"#2F60A1")
-                tooltip
-                        .html(d.value)
-                        .style('left', (d3.event.pageX + 12) + 'px')
-                        .style('top', (d3.event.pageY - 20) + 'px')
-              })
-      svg.append("g")
-              .attr("class","axis")
-              .attr("transform","translate(" + padding.left + "," + (height - padding.bottom) + ")")
-              .call(xAxis)
-      svg.append("g")
-              .attr("class","axis")
-              .attr("transform","translate(" + padding.left + "," + padding.top + ")")
-              .call(yAxis)
+      var rects = svg.selectAll('.MyRect')
+        .data(that.bar)
+        .enter()
+        .append('rect')
+        .attr('class', 'MyRect')
+        .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')')
+        .attr('x', function (d, i) {
+          return xScale(d.key) + rectPadding / 2
+        })
+        .attr('y', function (d) {
+          return yScale(d.value)
+        })
+        .attr('width', xScale.bandwidth() - rectPadding)
+        .attr('height', function (d) {
+          return height - padding.top - padding.bottom - yScale(d.value)
+        })
+        .attr('fill', '#ABC8E2')
+        .on('mouseover', function (d) {
+          d3.select(this).attr('fill', '#2F60A1')
+          tooltip.style('display', 'inline')
+        })
+        .on('mouseout', function (d, i) {
+          d3.select(this).attr('fill', '#ABC8E2')
+          tooltip.style('display', 'none')
+        })
+        .on('mousemove', function (d, i) {
+          d3.select(this).attr('fill', '#2F60A1')
+          tooltip
+            .html(d.value)
+            .style('left', (d3.event.pageX + 12) + 'px')
+            .style('top', (d3.event.pageY - 20) + 'px')
+        })
+      svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(' + padding.left + ',' + (height - padding.bottom) + ')')
+        .call(xAxis)
+      svg.append('g')
+        .attr('class', 'axis')
+        .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')')
+        .call(yAxis)
     },
     showSvgMore () {
       var that = this
