@@ -32,10 +32,10 @@ export default {
   },
   methods: {
     show: function () {
-      window.open('http://43.240.98.120/SCI/?#/search')
+      window.open('http://43.240.98.120:8080/?#/search')
     },
     see: function () {
-      window.open('http://43.240.98.120/SCI/?#/profile')
+      window.open('http://43.240.98.120:8080/?#/profile')
     }
   }
 }
