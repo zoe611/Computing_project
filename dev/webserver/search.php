@@ -156,6 +156,9 @@ function search_recent() {
 function search() {
   $term = $_POST['term'];
   $author_search = $_POST['author_search'];
+  $pattern = "/'/" ;
+  $replacement = "\\'";
+  $author_search = preg_replace($pattern, $replacement, $author_search);
   if ($term == "" & $author_search == "") {
     print "empty search";
     exit();

@@ -740,7 +740,6 @@ export default {
 <style scoped>
   .content {
     width:100%;
-    height: 170vh;
     background: #F2F2F2;
   }
   .header {
@@ -1008,7 +1007,6 @@ export default {
     overflow: scroll;
     -webkit-box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
     box-shadow: 2px 2px 3px rgba(0,0,1,0.2);
-    float: left;
   }
   .no_result {
     width: 82%;
@@ -1249,7 +1247,7 @@ export default {
     font-family: "Times New Roman", Times, serif;
   }
   .duplicate {
-    height: 500px;
+    height: 520px;
     overflow: scroll;
   }
   .modal_relation {

@@ -20,6 +20,7 @@ export default {
   height: 100%;
   margin-top: 0;
   padding-top: 0;
+  background: #F2F2F2;
 }
 svg {
   overflow:inherit;
