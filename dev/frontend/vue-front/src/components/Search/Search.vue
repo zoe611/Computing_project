@@ -71,7 +71,7 @@
     <div class="visual" v-if="result.bar || result.rank || result.relation">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
-        <div class="bar"  ref="bar" style="width:100%" v-if="show_bar()">
+        <div class="bar_visual"  ref="bar" style="width:100%" v-if="show_bar()">
           <d3-bar :data="bar" :options="{
     // bar config
     fill : '#ABC8E2',
@@ -110,7 +110,7 @@
         <div class="rank-bar" v-for="(item,index) in rank" :key="item.id">
           <p class="rank_name">{{item.name}}</p>
           <p class="rank_value">{{item.value}}<span class="unit"> articles</span></p>
-          <div class="bar" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}" @click="search_rank(index)"></div>
+          <div class="bar" style="height: 60px;" v-bind:style="{background: rank_color[index], width: (item.value/rank_max)*100 + '%'}" @click="search_rank(index)"></div>
         </div>
       </div>
       <div class="relation" v-if="showrelation()">
@@ -504,7 +504,7 @@ export default {
         .style('opacity', '1')
         .style('font-size', '16px')
         .style('border-radius', '2px')
-      var svgBar = d3.select('.bar')
+      var svgBar = d3.select('.bar_visual')
         .append('svg')
         .attr('class', 'bar_svg')
         .attr('width', 400)
