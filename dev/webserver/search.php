@@ -1,11 +1,11 @@
 <?php
 header('Access-Control-Allow-Origin:*');
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Connection, User-Agent, Cookie');
-//error_reporting(E_ALL);
-//ini_set('display_errors', '1');
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 $method = $_POST['method'];
 //getBarData('11700','','author_id');
-//getRankData("acute");
+//getRankData("melbourne");
 //search_term("recovery care");
 //$method = 'visual';
 //search_both('mazzon e','trauma');
@@ -630,12 +630,13 @@ function getRankData($term) {
   $query = "set character_set_results = utf8";
   $conn->query($query);
   $match = "MATCH (article_title,abstract,keywords) AGAINST ('". $term ."')";
-  $query = "SELECT COUNT(*) AS num , c.author_name, c.id , c.author_fname, c.author_des"
+  $query = "SELECT COUNT(*) AS num , c.author_name, c.id , c.author_fname, c.author_des "
     . "FROM `articles` AS a JOIN `authors_articles` AS b JOIN `author` AS c "
     . "ON a.article_id = b.article_id AND b.author_id = c.id "
     . "WHERE " . $match
     . " GROUP BY c.id "
     . "ORDER BY num DESC LIMIT 5";
+  print $query;
   $result = $conn->query($query);
   $num = $result->num_rows;
   if($num > 0) {

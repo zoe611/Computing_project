@@ -421,6 +421,7 @@ export default {
     },
     show_bar () {
       if (this.result.bar && this.result.bar !== 'no bar') {
+        console.log('test/test')
         d3.select('.bar_svg').remove()
         d3.select('.tooltip').remove()
         this.formBar()
@@ -429,6 +430,8 @@ export default {
         } else {
           this.show_bar_svg()
         }
+        return true
+      } else if (this.result.bar && this.result.bar === 'no bar') {
         return true
       } else {
         console.log('what!')
