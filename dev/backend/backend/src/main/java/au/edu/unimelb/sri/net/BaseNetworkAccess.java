@@ -21,9 +21,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by sulman on 6/02/2017.
- */
 public class BaseNetworkAccess {
 
     private String SCHEME = "https";
@@ -218,7 +215,7 @@ public class BaseNetworkAccess {
                 .setParameter("usehistory", "y")
                 .setParameter("retmode", "json")
                 .setParameter("tool", "SRI_metadata_extraction")
-                .setParameter("email", "muhammad.sarwar@unimelb.edu.au")
+                .setParameter("email", "junwenz@unimelb.edu.au")
                 .build();
     }
     

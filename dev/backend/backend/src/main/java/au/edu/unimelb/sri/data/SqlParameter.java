@@ -4,9 +4,6 @@ import org.postgresql.util.PGobject;
 
 import java.sql.SQLException;
 
-/**
- * Created by sulman on 7/02/2017.
- */
 public class SqlParameter {
 
     private String paramName;

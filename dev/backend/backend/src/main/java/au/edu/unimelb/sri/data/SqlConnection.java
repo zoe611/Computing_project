@@ -9,9 +9,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by sulman on 8/02/2017.
- */
+
 public class SqlConnection {
 
     private static String DRIVER_CLASS_PGSIMPLE = "org.postgresql.ds.PGSimpleDataSource";

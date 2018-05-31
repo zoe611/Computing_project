@@ -6,9 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by sulman on 4/02/2017.
- */
 public class TermHitsList extends Base {
 
     private String term;

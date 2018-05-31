@@ -5,9 +5,7 @@ import org.postgresql.util.PGobject;
 import javax.sql.DataSource;
 import java.sql.*;
 
-/**
- * Created by sulman on 31/01/2017.
- */
+
 public abstract class Base {
 
     String DRIVER_CLASS = "org.postgresql.ds.PGSimpleDataSource";

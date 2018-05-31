@@ -7,9 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by sulman on 7/02/2017.
- */
+
 public class SqlCommand {
 
     private String command;
