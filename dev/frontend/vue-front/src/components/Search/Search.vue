@@ -375,6 +375,7 @@ export default {
       this.request.filter = 'all'
       this.request.sort = 'relative'
       this.request.method = 'search_author_id'
+      this.request.term = ''
       this.result.result = null
       this.search()
     },
@@ -403,6 +404,7 @@ export default {
       this.request.author_name = authorName
       this.request.author_fname = authorFname
       this.request.author_des = authorDes
+      this.request.term = ''
       this.request.method = 'search_author_id'
       this.$refs.author_input.value = authorName
       this.$refs.term_input.value = ''
@@ -425,7 +427,7 @@ export default {
       this.bar = this.result.bar
     },
     testString (str) {
-      var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]")
+      var pattern = new RegExp("[~!@#$^&*()=|{}:;,\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“。，、？]")
       if (pattern.test(str)) {
         return true
       } else {
@@ -434,7 +436,7 @@ export default {
     },
     showrelation () {
       if (this.result.relation) {
-        d3.select('.tests').remove()
+        d3.select('.test').remove()
         this.nodes = this.result.relation.nodes
         this.links = this.result.relation.links
         this.showSvg()
@@ -504,16 +506,19 @@ export default {
               })
               .attr('fill',"#ABC8E2")
               .on('mouseover', function(d) {
+                d3.select(this).attr('fill',"#2F60A1")
                 tooltip.style('display', 'inline')
               })
               .on('mouseout', function(d, i){
+                d3.select(this).attr('fill',"#ABC8E2")
                 tooltip.style('display', 'none')
               })
               .on('mousemove', function(d, i){
+                d3.select(this).attr('fill',"#2F60A1")
                 tooltip
                         .html(d.value)
-                        .style('left', (d3.event.pageX - 30) + 'px')
-                        .style('top', (d3.event.pageY - 30) + 'px')
+                        .style('left', (d3.event.pageX + 12) + 'px')
+                        .style('top', (d3.event.pageY - 20) + 'px')
               })
       svg.append("g")
               .attr("class","axis")

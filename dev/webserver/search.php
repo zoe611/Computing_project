@@ -435,7 +435,7 @@ function search_author_id_term($author_id,$term,$author_name,$author_fname,$auth
     } else if ($filter === 'all' and $sort === 'sort_pubdate') {
       $query = $query_base . " ORDER BY " . $sort . " DESC";
     } else if ($sort === 'sort_pubdate') {
-      $query = $query_base . " AND year " . $filter . " ORDER BY b." . $sort . " DESC";
+      $query = $query_base . " AND year " . $filter . " ORDER BY " . $sort . " DESC";
     } else {
       $query = $query_base . " AND year " . $filter . " ORDER BY relevance DESC";
     }
