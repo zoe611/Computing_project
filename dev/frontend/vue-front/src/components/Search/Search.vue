@@ -465,7 +465,7 @@ export default {
       this.bar = this.result.bar
     },
     testString (str) {
-      var pattern = new RegExp('[~!@#$^&*()=|{}:;,\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“。，、？]')
+      var pattern = new RegExp('[~!@#$^&*()=|{}:;,\\[\\].<>《》/?~！@#￥……&*（）——|{}【】；：”“。，、？]')
       if (pattern.test(str)) {
         return true
       } else {
