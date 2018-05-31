@@ -465,7 +465,7 @@ function search_author_id_term($author_id,$term,$author_name,$author_fname,$auth
     } else {
       $response['result'] = "no result";
       if($_POST['method'] !== 'search'){
-        $bar_data = getBarData($author_id,$term,"author_id_term");
+        $bar_data = "no bar";
         $response['relation'] = getRelation($author_id,$author_name);
         $response['bar'] = $bar_data;
       }
@@ -473,7 +473,7 @@ function search_author_id_term($author_id,$term,$author_name,$author_fname,$auth
   } else {
     $response['result'] = "no result";
     if($_POST['method'] !== 'search'){
-      $bar_data = getBarData($author_id,$term,"author_id_term");
+      $bar_data = "no bar";
       $response['relation'] = getRelation($author_id,$author_name);
       $response['bar'] = $bar_data;
     }
