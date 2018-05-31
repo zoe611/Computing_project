@@ -21,4 +21,7 @@ export default {
   margin-top: 0;
   padding-top: 0;
 }
+svg {
+  overflow:inherit;
+}
 </style>

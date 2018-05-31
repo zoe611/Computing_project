@@ -334,8 +334,11 @@ function search_both($author_name,$term) {
     if(count($data) === 1){
       search_author_id_term($data[0]['author_id'],$term,$author_name,$data[0]['author_fname'],$data[0]['des']);
       return true;
+    } else if(count($data) > 1) {
+      $response['duplicate'] = $data;
+    } else {
+      $response['result'] = "no result";
     }
-    $response['duplicate'] = $data;
     $response = json_encode($response,JSON_UNESCAPED_UNICODE);
     print $response;
     $conn->close();

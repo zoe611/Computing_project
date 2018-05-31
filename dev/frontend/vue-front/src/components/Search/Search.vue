@@ -71,7 +71,36 @@
     <div class="visual" v-if="result.bar || result.rank || result.relation">
       <div class="bar_chart" v-if="result.bar">
         <p class="bar_title">The Number of Publications Each Year</p>
-        <div class="bar"  ref="bar" style="width:100%" v-if="show_bar()"></div>
+        <div class="bar"  ref="bar" style="width:100%" v-if="show_bar()">
+          <d3-bar :data="bar" :options="{
+    // bar config
+    fill : '#ABC8E2',
+    stroke : '#ABC8E2',
+    fillOpacity : 1,
+    strokeOpacity : 1,
+    // axis font config
+    axisFontSize : 12,
+    axisFontWeight : 400,
+    // axis label config
+    axisYLabel : '',
+    axisXLabel : '',
+    axisXLabelHeight : 0,
+    axisYLabelWidth : 0,
+    // axis label font config
+    axisLabelFontSize : 10,
+    axisLabelFontWeight : 350,
+    axisLabelFontOpacity : 0.5,
+    // axis lane config
+    axisXHeight : 20,
+    axisYWidth : 40,
+    isVertical : true,
+}" width="100%" height="400px" :margin="{
+    left: 0,
+    top: 10,
+    right: -10,
+    bottom: 10
+}" v-if="bar_term" style="overflow: inherit;"></d3-bar>
+        </div>
       </div>
       <div class="rank">
         <div class="loading2" v-if="loading2">
@@ -176,6 +205,7 @@
         </div>
       </div>
     </div>
+    <div class="footer" style="height:30px;width:100%"></div>
   </div>
 </template>
 <script>
@@ -189,6 +219,7 @@ export default {
   },
   data () {
     return {
+      bar_term: false,
       bar: null,
       relation: null,
       nodes: null,
@@ -281,6 +312,7 @@ export default {
       this.isCustom = false
       this.loading2 = false
       this.result = {}
+      this.bar_term = false
       this.rank = null
       if (authorSearch === '' && termSearch === '') {
         alert('Please enter author or topic!')
@@ -361,6 +393,7 @@ export default {
       this.request.author_search = this.rank[index].name
       this.result = {}
       this.rank = null
+      this.bar_term = false
       this.search()
     },
     search_filter_term () {
@@ -389,10 +422,16 @@ export default {
     show_bar () {
       if (this.result.bar) {
         d3.select('.bar_svg').remove()
+        d3.select('.tooltip').remove()
         this.formBar()
-        this.show_bar_svg()
+        if (this.request.author_search === '') {
+          this.bar_term = true
+        } else {
+          this.show_bar_svg()
+        }
         return true
       } else {
+        console.log('what the fuck!')
         return false
       }
     },
@@ -435,7 +474,6 @@ export default {
     },
     showrelation () {
       if (this.result.relation) {
-        d3.select('.test').remove()
         this.nodes = this.result.relation.nodes
         this.links = this.result.relation.links
         this.showSvg()
@@ -460,7 +498,7 @@ export default {
         .style('opacity', '1')
         .style('font-size', '16px')
         .style('border-radius', '2px')
-      var svg = d3.select('.bar')
+      var svgBar = d3.select('.bar')
         .append('svg')
         .attr('class', 'bar_svg')
         .attr('width', 400)
@@ -487,7 +525,7 @@ export default {
       } else if (max === 1) {
         yAxis = d3.axisLeft().scale(yScale).ticks(1)
       }
-      var rects = svg.selectAll('.MyRect')
+      var rects = svgBar.selectAll('.MyRect')
         .data(that.bar)
         .enter()
         .append('rect')
@@ -519,11 +557,11 @@ export default {
             .style('left', (d3.event.pageX + 12) + 'px')
             .style('top', (d3.event.pageY - 20) + 'px')
         })
-      svg.append('g')
+      svgBar.append('g')
         .attr('class', 'axis')
         .attr('transform', 'translate(' + padding.left + ',' + (height - padding.bottom) + ')')
         .call(xAxis)
-      svg.append('g')
+      svgBar.append('g')
         .attr('class', 'axis')
         .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')')
         .call(yAxis)
@@ -700,7 +738,7 @@ export default {
 <style scoped>
   .content {
     width:100%;
-    height:1400px;
+    height: 170vh;
     background: #F2F2F2;
   }
   .header {

@@ -2,17 +2,22 @@
   <div class="home">
     <!--     title -->
   <h1>Spinal Cord Injury Search Hub</h1>
-    <!--       search form -->
-    <form id="search" class="search" action="">
-      <button type="submit" class="button" v-on:click= "show">
-        Let's Search
+    <div class="buttons">
+      <button type="submit"
+              class="button"
+              id="above"
+              v-on:click="show">
+        Let's
+        Search
       </button>
-    </form>
-    <form class="visual" action="">
-      <button type="submit" class="button" v-on:click= "see">
-        Visualize All
+      <button type="submit"
+              class="button"
+              v-on:click="see">
+        Visualize
+        All
       </button>
-    </form>
+    </div>
+
   </div>
 </template>
 
@@ -89,18 +94,19 @@ export default {
     font-weight: 400;
     src: local('Open Sans'), local('OpenSans'), url(http://themes.googleusercontent.com/static/fonts/opensans/v7/cJZKeOuBrn4kERxqtaUH3bO3LdcAZYWl9Si6vvxL-qU.woff) format('woff');
   }
-
-  .search {
-    width: 700px;
-    height: 40px;
-    position:relative;
-    margin: 1px auto;
-    margin-top: 108px; }
-
+  .buttons {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 140px;
+    width: 300px;
+    margin: auto;
+  }
   .button {
-    position: relative;
-    margin-top: 10px;
-    border: 0;
+    display: block;
+    margin: 10px auto;
     padding: 0;
     cursor: pointer;
     height: 60px;
@@ -110,8 +116,8 @@ export default {
     font-weight: bold;
     color:#9FD2EE;
     border: 2.5px solid rgb(249,249,249);
-    border-radius: 3px;}
-
+    border-radius: 3px;
+  }
   .button:hover {
     background: #fff;
     color:#444;}
@@ -119,11 +125,4 @@ export default {
     box-shadow: 0px 0px 12px 0px rgba(225, 225, 225, 1);}
 
   .button:focus {outline: 0;}
-
-  .visual {
-    width: 700px;
-    height: 40px;
-    position:relative;
-    margin: 1px auto;
-    margin-top: 30px; }
 </style>
