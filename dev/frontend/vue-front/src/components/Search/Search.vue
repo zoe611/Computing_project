@@ -410,6 +410,7 @@ export default {
       this.request.method = 'search_author_id'
       this.request.term = ''
       this.result.result = null
+      this.$refs.keyword.value = ''
       this.search()
     },
     show () {

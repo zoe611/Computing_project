@@ -636,7 +636,6 @@ function getRankData($term) {
     . "WHERE " . $match
     . " GROUP BY c.id "
     . "ORDER BY num DESC LIMIT 5";
-  print $query;
   $result = $conn->query($query);
   $num = $result->num_rows;
   if($num > 0) {
