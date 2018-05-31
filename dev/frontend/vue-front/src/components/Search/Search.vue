@@ -447,6 +447,7 @@ export default {
       this.$refs.author_input.value = authorName
       this.$refs.term_input.value = ''
       this.result = {}
+      this.filter_keyword = true
       this.search()
     },
     clickFunc () {
